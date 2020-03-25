@@ -3,7 +3,6 @@ package com.konoha.votacao.repository;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
-import com.konoha.votacao.modelo.Pauta;
-import com.konoha.votacao.repository.AssembleiaRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
