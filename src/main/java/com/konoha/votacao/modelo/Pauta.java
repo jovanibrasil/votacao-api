@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,20 +36,18 @@ public class Pauta implements Serializable{
   @EqualsAndHashCode.Include
   private Long codPauta;
   
-  @NotNull
-  @Column(name = "titulo")
+  @Column(name = "titulo", nullable = false)
   private String titulo;
   
   @Column(name = "descricao")
   private String descricao;
   
-  @NotNull
   @EqualsAndHashCode.Include
-  @Column(name = "data_criacao")
+  @Column(name = "data_criacao", nullable = false)
   private LocalDateTime dataCriacao;
   
-  @Column(name = "observacao")
-  private String observacao;
+  @Column(name = "observacoes")
+  private String observacoes;
   
   @ManyToOne
   @JoinColumn(name = "cod_assembleia")
