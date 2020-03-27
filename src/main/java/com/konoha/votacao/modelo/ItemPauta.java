@@ -1,6 +1,7 @@
 package com.konoha.votacao.modelo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,11 +31,17 @@ public class ItemPauta implements Serializable {
   @EqualsAndHashCode.Include
   private Long codItemPauta;
 
-  @Column(name = "descricao_item_pauta")
-  private String descricaoItemPauta;
+  @Column(name = "titulo", nullable = false)
+  private String titulo;
 
+  @Column(name = "descricao")
+  private String descricao;
+
+  @Column(name = "data_criacao")
+  private LocalDateTime dataCriacao;
+  
   @ManyToOne
-  @JoinColumn(name = "cod_pauta")
+  @JoinColumn(name = "cod_pauta", nullable = false)
   private Pauta pauta;
 
 }
