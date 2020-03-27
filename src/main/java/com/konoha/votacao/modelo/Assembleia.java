@@ -34,8 +34,7 @@ public class Assembleia implements Serializable {
   @EqualsAndHashCode.Include
   private Long codAssembleia;
 
-  @NotNull
-  @Column(name = "titulo")
+  @Column(name = "titulo", nullable = false)
   private String titulo;
 
   @Column(name = "descricao")
