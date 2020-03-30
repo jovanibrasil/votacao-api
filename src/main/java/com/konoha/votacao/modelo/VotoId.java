@@ -18,10 +18,10 @@ public class VotoId implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Column(name="cod_item_pauta")
-  private ItemPauta codItemPauta;
+  private Long codItemPauta;
   
   @Column(name="cod_usuario")
-  private Usuario codUsuario;
+  private Long codUsuario;
 
   
 
