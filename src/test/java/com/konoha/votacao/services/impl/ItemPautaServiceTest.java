@@ -1,4 +1,4 @@
-package com.konoha.votacao.services;
+package com.konoha.votacao.services.impl;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

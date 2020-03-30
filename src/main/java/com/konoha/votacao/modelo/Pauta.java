@@ -50,7 +50,7 @@ public class Pauta implements Serializable{
   private String observacoes;
   
   @ManyToOne
-  @JoinColumn(name = "cod_assembleia")
+  @JoinColumn(name = "cod_assembleia", nullable = false)
   private Assembleia assembleia;
   
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "pauta")

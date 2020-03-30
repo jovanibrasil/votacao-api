@@ -1,4 +1,4 @@
-package com.konoha.votacao.services;
+package com.konoha.votacao.services.impl;
 
 import org.junit.runner.RunWith;
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.repository.AssembleiaRepository;
-import com.konoha.votacao.service.AssembleiaService;
+import com.konoha.votacao.services.AssembleiaService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

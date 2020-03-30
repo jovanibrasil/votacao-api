@@ -28,7 +28,7 @@ public class ItemPautaController {
 	private final ItemPautaMapper itemPautaMapper;
 	
 	/**
-	 * 
+	 * Salva um item de pauta.
 	 * 
 	 * @param itemPautaForm
 	 * @param assembleiaId
