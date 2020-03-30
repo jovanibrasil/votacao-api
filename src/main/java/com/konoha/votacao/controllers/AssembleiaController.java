@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.response.Response;
-import com.konoha.votacao.service.AssembleiaService;
+import com.konoha.votacao.services.AssembleiaService;
 
 import lombok.RequiredArgsConstructor;
 

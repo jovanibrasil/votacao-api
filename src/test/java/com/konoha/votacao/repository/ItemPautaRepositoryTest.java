@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
 
@@ -29,19 +30,26 @@ public class ItemPautaRepositoryTest {
 	private ItemPautaRepository itemPautaRepository;
 	@Autowired
 	private PautaRepository pautaRepository;
+	@Autowired
+	private AssembleiaRepository assembleiaRepository;
 	
 	private ItemPauta itemPauta;
 	private final String DESCRICAO = "Uma breve descrição";
 	private final String TITULO = "Título";
 
 	@Before
-	public void setUp() {
+	public void setUp() {		
 		itemPautaRepository.deleteAll();
+		
+		Assembleia assembleia = new Assembleia();
+		assembleia.setTitulo("Título");
+		assembleiaRepository.save(assembleia);
 		itemPauta = new ItemPauta();
 		itemPauta.setDescricao(DESCRICAO);
 		itemPauta.setTitulo(TITULO);
 		Pauta pauta = new Pauta();
 		pauta.setTitulo("Título da pauta");
+		pauta.setAssembleia(assembleia);
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta = pautaRepository.save(pauta);
 		itemPauta.setPauta(pauta);

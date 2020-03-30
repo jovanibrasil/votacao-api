@@ -1,4 +1,4 @@
-package com.konoha.votacao.service;
+package com.konoha.votacao.services;
 
 import com.konoha.votacao.modelo.Assembleia;
 

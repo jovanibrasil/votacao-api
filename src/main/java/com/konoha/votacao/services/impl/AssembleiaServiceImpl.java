@@ -1,11 +1,11 @@
-package com.konoha.votacao.service.impl;
+package com.konoha.votacao.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.repository.AssembleiaRepository;
-import com.konoha.votacao.service.AssembleiaService;
+import com.konoha.votacao.services.AssembleiaService;
 
 import lombok.RequiredArgsConstructor;
 

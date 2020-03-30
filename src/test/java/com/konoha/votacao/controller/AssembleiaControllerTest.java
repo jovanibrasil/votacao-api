@@ -25,7 +25,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.Pauta;
-import com.konoha.votacao.service.AssembleiaService;
+import com.konoha.votacao.services.AssembleiaService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
