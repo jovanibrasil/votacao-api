@@ -1,4 +1,4 @@
-package com.konoha.votacao.controller;
+package com.konoha.votacao.controllers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
