@@ -9,7 +9,8 @@ import com.konoha.votacao.modelo.ItemPauta;
 @Mapper
 @DecoratedWith(ItemPautaMapperDecorator.class)
 public interface ItemPautaMapper {
-
+	
+	
 	ItemPauta itemPautaFormToItemPauta(ItemPautaForm itemPautaForm);
 
 }
