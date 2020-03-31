@@ -13,13 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class PautaMapperDecorator implements PautaMapper {
 
 	private PautaMapper pautaMapper;
-	private final AssembleiaService assembleiaService;
-	private final ItemPautaService itemPautaService;
-	
-	@Autowired
-	public void setPautaMapper(PautaMapper pautaMapper) {
-		this.pautaMapper = pautaMapper;
-	}
+	private AssembleiaService assembleiaService;
+	private ItemPautaService itemPautaService;
 	
 	@Override
 	public Pauta pautaFormToPauta(PautaForm pautaForm) {
@@ -30,4 +25,19 @@ public class PautaMapperDecorator implements PautaMapper {
 		return pauta;
 	}
 
+	@Autowired
+	public void setPautaMapper(PautaMapper pautaMapper) {
+		this.pautaMapper = pautaMapper;
+	}
+
+	@Autowired
+	public void setAssembleiaService(AssembleiaService assembleiaService) {
+		this.assembleiaService = assembleiaService;
+	}
+
+	@Autowired
+	public void setItemPautaService(ItemPautaService itemPautaService) {
+		this.itemPautaService = itemPautaService;
+	}
+	
 }
