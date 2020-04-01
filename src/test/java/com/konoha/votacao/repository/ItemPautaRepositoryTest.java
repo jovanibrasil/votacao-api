@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,7 +37,8 @@ public class ItemPautaRepositoryTest {
 	private ItemPauta itemPauta;
 	private final String DESCRICAO = "Uma breve descrição";
 	private final String TITULO = "Título";
-
+	private Pauta pauta;
+	
 	@Before
 	public void setUp() {		
 		itemPautaRepository.deleteAll();
@@ -47,7 +49,7 @@ public class ItemPautaRepositoryTest {
 		itemPauta = new ItemPauta();
 		itemPauta.setDescricao(DESCRICAO);
 		itemPauta.setTitulo(TITULO);
-		Pauta pauta = new Pauta();
+		pauta = new Pauta();
 		pauta.setTitulo("Título da pauta");
 		pauta.setAssembleia(assembleia);
 		pauta.setDataCriacao(LocalDateTime.now());
@@ -176,5 +178,18 @@ public class ItemPautaRepositoryTest {
 		assertEquals(0, itemPautaRepository.findAll().size());
 	}
 		
+	/**
+	 * Testa a listagem de itens de uma pauta específica.
+	 * 
+	 */
+	@Test
+	public void testListItensPautaPorPauta() {
+		itemPauta = itemPautaRepository.save(itemPauta);
+		itemPauta.setCodItemPauta(null);
+		itemPauta = itemPautaRepository.save(itemPauta);
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		assertEquals(2, itemPautaRepository
+				.findByPautaCodPauta(pauta.getCodPauta(), pageRequest).getContent().size());
+	}
 	
 }

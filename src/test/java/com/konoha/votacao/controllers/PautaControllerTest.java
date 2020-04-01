@@ -105,7 +105,8 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$").doesNotExist());
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 	
 	/**
@@ -122,7 +123,8 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$").doesNotExist());
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 	
 	/**
@@ -142,7 +144,8 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$").doesNotExist());
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 	
 	/**
@@ -158,7 +161,8 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$").doesNotExist());
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 	
 	public static String asJsonString(final Object obj) {
