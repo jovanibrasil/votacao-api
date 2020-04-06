@@ -70,7 +70,7 @@ public class PautaController {
 		PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta);
 		Link link = linkTo(methodOn(ItemPautaController.class)
 				.listaItensPauta(assembleiaId, pauta.getCodPauta(), Pageable.unpaged()))
-				.withRel("getPautas");
+				.withRel("getItensDePauta");
 		pautaDto.add(link);
 		return ResponseEntity.ok(pautaDto);
 	}
