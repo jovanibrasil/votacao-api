@@ -41,7 +41,6 @@ public class PautaControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
-	
 	@MockBean
 	private PautaService pautaService;
 	@MockBean

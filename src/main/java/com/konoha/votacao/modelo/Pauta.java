@@ -59,4 +59,8 @@ public class Pauta implements Serializable{
   @Embedded
   private Sessao sessao;
 
+  public boolean isAberta() {
+	  return sessao.isAberta();
+  }
+
 }

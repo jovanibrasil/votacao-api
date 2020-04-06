@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,19 +25,17 @@ public class Usuario implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
-  @Column(name = "cod_usuario")
+  @Column(name = "cod_usuario", nullable = false)
   private Long codUsuario;
 
-  @NotNull
   @EqualsAndHashCode.Include
-  @Column(name = "cpf")
+  @Column(name = "cpf", nullable = false)
   private String cpf;
 
-  @NotNull
-  @Column(name = "nome_usuario")
+  @Column(name = "nome_usuario", nullable = false)
   private String nomeUsuario;
 
-  @Column(name = "senha")
+  @Column(name = "senha", nullable = false)
   private String senha;
 
 }

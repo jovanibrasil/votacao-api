@@ -12,8 +12,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
+@Entity
 @Table(name = "voto")
 public class Voto implements Serializable {
 
@@ -23,5 +23,11 @@ public class Voto implements Serializable {
 
   @EmbeddedId
   private VotoId votoId;
+  
+  public Voto(Usuario usuario, ItemPauta itemPauta, Boolean voto) {
+	  this.votoId = new VotoId(itemPauta.getCodItemPauta(), 
+			  usuario.getCodUsuario());
+	  this.voto = voto;
+  }
 
 }
