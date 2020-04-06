@@ -1,9 +1,12 @@
 package com.konoha.votacao.services.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.UsuarioService;
 
+@Service
 public class UsuarioServiceImpl implements UsuarioService {
 	
 	private UsuarioRepository usuarioRepository;
