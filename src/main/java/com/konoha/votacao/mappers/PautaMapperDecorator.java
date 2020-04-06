@@ -10,7 +10,7 @@ import com.konoha.votacao.services.ItemPautaService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PautaMapperDecorator implements PautaMapper {
+public abstract class PautaMapperDecorator implements PautaMapper {
 
 	private PautaMapper pautaMapper;
 	private AssembleiaService assembleiaService;

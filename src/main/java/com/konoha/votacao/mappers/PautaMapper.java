@@ -4,6 +4,7 @@ import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 
 import com.konoha.votacao.controllers.forms.PautaForm;
+import com.konoha.votacao.dto.PautaDTO;
 import com.konoha.votacao.modelo.Pauta;
 
 @Mapper
@@ -11,5 +12,6 @@ import com.konoha.votacao.modelo.Pauta;
 public interface PautaMapper {
 	
 	Pauta pautaFormToPauta(PautaForm pautaForm);
+	PautaDTO pautaToPautaDto(Pauta pauta);
 
 }
