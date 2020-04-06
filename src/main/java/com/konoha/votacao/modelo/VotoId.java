@@ -6,23 +6,24 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 @Getter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor 
+@AllArgsConstructor
 @Embeddable
+@EqualsAndHashCode
 public class VotoId implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  @Column(name="cod_item_pauta")
+  @Column(name="cod_item_pauta", nullable = false)
   private Long codItemPauta;
   
-  @Column(name="cod_usuario")
+  @Column(name="cod_usuario", nullable = false)
   private Long codUsuario;
-
-  
 
 }
