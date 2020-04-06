@@ -43,6 +43,11 @@ public class VotoControllerTest {
 		votoForm.setItemPautaId(1L);
 	}
 	
+	/**
+	 * Testa registro de um voto válido.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSalvaVoto() throws Exception {
 		doNothing().when(votoService).salvarVoto(votoForm.getItemPautaId(), votoForm.getVoto());
@@ -52,15 +57,24 @@ public class VotoControllerTest {
 				.andExpect(status().isCreated());
 	}
 	
+	/**
+	 * Testa registro de um voto inválido (nulo)
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSalvaVotoNulo() throws Exception {
-		votoForm.setItemPautaId(null);
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(votoForm)))		
+				.content(asJsonString(null)))		
 				.andExpect(status().isBadRequest());
 	}
 
+	/**
+	 * Testa registro de um voto inválido (item de pauta inválido)
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSalvaVotoItemPautaNulo() throws Exception {
 		votoForm.setItemPautaId(null);
@@ -70,6 +84,11 @@ public class VotoControllerTest {
 				.andExpect(status().isBadRequest());
 	}
 	
+	/**
+	 * Testa registro de um voto inválido (item de pauta não existe)
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSalvaVotoItemPautaNaoExiste() throws Exception {
 		doThrow(VotoException.class).when(votoService)
@@ -80,6 +99,11 @@ public class VotoControllerTest {
 				.andExpect(status().isBadRequest());
 	}
 	
+	/**
+	 * Testa registro de um voto inválido (voto já foi feito)
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSalvaVotoRepetido() throws Exception {
 		doThrow(VotoException.class).when(votoService)
