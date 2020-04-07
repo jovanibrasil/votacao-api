@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.repository.ItemPautaRepository;
-import com.konoha.votacao.services.impl.ItemPautaServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItemPautaServiceTest {
