@@ -1,20 +1,21 @@
 package com.konoha.votacao.repository;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
@@ -24,8 +25,7 @@ import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@DataJpaTest
 public class VotoRepositoryTest {
 
 	@Autowired
@@ -42,6 +42,9 @@ public class VotoRepositoryTest {
 	
 	@Autowired
 	private AssembleiaRepository assembleiaRepository;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	private Voto voto;
 	private Usuario usuario;
@@ -94,18 +97,24 @@ public class VotoRepositoryTest {
 		assertEquals(itemPauta.getCodItemPauta(), optVoto.get().getVotoId().getCodItemPauta());
 	}
 	
-	@Test(expected = DataIntegrityViolationException.class)
+	
+	@Test(expected = PersistenceException.class)
 	public void testSalvaVotoCodItemPautaInvalido() {
+		entityManager.detach(itemPauta);
 		itemPauta.setCodItemPauta(null);
 		voto = new Voto(usuario, itemPauta, true);
-		votoRepository.save(voto);
+		voto = votoRepository.save(voto);
+		entityManager.flush();
 	}
 	
-	@Test(expected = DataIntegrityViolationException.class)
+	
+	@Test(expected = PersistenceException.class)
 	public void testSalvaVotoCodUsuarioInvalido() {
+		entityManager.detach(usuario);
 		usuario.setCodUsuario(null);
 		voto = new Voto(usuario, itemPauta, true);
 		votoRepository.save(voto);
+		entityManager.flush();
 	}
 	
 	@Test
@@ -118,7 +127,7 @@ public class VotoRepositoryTest {
 	@Test//(expected = DataIntegrityViolationException.class)
 	public void testSalvaVotosUsuariosDiferentes() {
 		votoRepository.save(voto);
-		
+		entityManager.detach(usuario);
 		usuario.setCodUsuario(null);
 		usuario = usuarioRepository.save(usuario);
 		
@@ -133,12 +142,12 @@ public class VotoRepositoryTest {
 		Voto primeiroVoto = votoRepository.save(voto); // voto true
 		
 		voto = new Voto(usuario, itemPauta, false);
-		votoRepository.save(voto);
+		votoRepository.save(voto); // faz update para false
 		
 		Voto primeiroVotoSalvo = votoRepository
 				.findByVotoIdCodItemPautaAndVotoIdCodUsuario(itemPauta.getCodItemPauta(), usuario.getCodUsuario()).get();
  		
-		assertNotEquals(primeiroVoto.getVoto(), primeiroVotoSalvo.getVoto());
+		assertEquals(primeiroVoto.getVoto(), primeiroVotoSalvo.getVoto());
 	}
 	
 	@Test

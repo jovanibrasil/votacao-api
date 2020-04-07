@@ -10,14 +10,16 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
@@ -26,14 +28,15 @@ import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.modelo.Sessao;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@DataJpaTest
 public class PautaRepositoryTest {
 
 	@Autowired
 	private PautaRepository pautaRepository;
 	@Autowired
 	private AssembleiaRepository assembleiaRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	private final String TITULO = "Título";
 	private final String DESCRICAO = "Descricao";
@@ -108,6 +111,7 @@ public class PautaRepositoryTest {
 	@Test
 	public void testBuscaPautaPorId() {
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pauta = pautaRepository.save(pauta);
 		assertTrue(pautaRepository.findById(pauta.getCodPauta()).isPresent());
@@ -120,10 +124,13 @@ public class PautaRepositoryTest {
 	@Test
 	public void testListaPautas() {
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
 		assertEquals(4, pautaRepository.findAll().size());
@@ -136,10 +143,13 @@ public class PautaRepositoryTest {
 	@Test
 	public void testListaPautasByAssembleiaId() {
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
+		entityManager.detach(pauta);
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
 		PageRequest pageRequest = PageRequest.of(0, 5);
@@ -207,5 +217,7 @@ public class PautaRepositoryTest {
 		assertEquals(novaDuracaoSessao, sessao.getDuracaoSessao());
 		assertEquals(novoInicioSessao, sessao.getInicioSessao());
 	}
+	
+	
 	
 }

@@ -8,14 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
@@ -23,8 +25,7 @@ import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@DataJpaTest
 public class ItemPautaRepositoryTest {
 
 	@Autowired
@@ -33,6 +34,8 @@ public class ItemPautaRepositoryTest {
 	private PautaRepository pautaRepository;
 	@Autowired
 	private AssembleiaRepository assembleiaRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	private ItemPauta itemPauta;
 	private final String DESCRICAO = "Uma breve descrição";
@@ -99,8 +102,10 @@ public class ItemPautaRepositoryTest {
 	@Test
 	public void testSaveItensPautaValida() {
 		itemPautaRepository.save(itemPauta);
+		entityManager.detach(itemPauta);
 		itemPauta.setCodItemPauta(null);
 		itemPautaRepository.save(itemPauta);
+		entityManager.detach(itemPauta);
 		itemPauta.setCodItemPauta(null);
 		itemPautaRepository.save(itemPauta);
 		assertEquals(3, itemPautaRepository.findAll().size());
@@ -185,6 +190,7 @@ public class ItemPautaRepositoryTest {
 	@Test
 	public void testListItensPautaPorPauta() {
 		itemPauta = itemPautaRepository.save(itemPauta);
+		entityManager.detach(itemPauta);
 		itemPauta.setCodItemPauta(null);
 		itemPauta = itemPautaRepository.save(itemPauta);
 		PageRequest pageRequest = PageRequest.of(0, 5);
