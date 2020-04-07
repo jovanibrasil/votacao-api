@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,17 +44,19 @@ public class PautaRepositoryTest {
 	private final Long DURACAO_SESSAO = 600L;
 	
 	private Pauta pauta;
+	private Assembleia assembleia;
+	private Sessao sessao;
 	
 	@Before
 	public void setUp() {
 		pautaRepository.deleteAll();
 		assembleiaRepository.deleteAll();
 		
-		Sessao sessao = new Sessao();
+		sessao = new Sessao();
 		sessao.setInicioSessao(INICIO_SESSAO);
 		sessao.setDuracaoSessao(DURACAO_SESSAO);
 		
-		Assembleia assembleia = new Assembleia();
+		assembleia = new Assembleia();
 		assembleia.setTitulo(TITULO);
 		assembleiaRepository.save(assembleia);
 		
@@ -124,6 +127,33 @@ public class PautaRepositoryTest {
 		pauta.setCodPauta(null);
 		pautaRepository.save(pauta);
 		assertEquals(4, pautaRepository.findAll().size());
+	}
+	
+	/**
+	 * Lista pelas pautas registradas no banco relacionadas a uma
+	 * assembleia específica.
+	 */
+	@Test
+	public void testListaPautasByAssembleiaId() {
+		pautaRepository.save(pauta);
+		pauta.setCodPauta(null);
+		pautaRepository.save(pauta);
+		pauta.setCodPauta(null);
+		pautaRepository.save(pauta);
+		pauta.setCodPauta(null);
+		pautaRepository.save(pauta);
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		assertEquals(4, pautaRepository.findByAssembleiaCodAssembleia(assembleia.getCodAssembleia(), pageRequest).getContent().size());
+	}
+	
+	/**
+	 * Lista pelas pautas registradas no banco relacionadas a uma
+	 * assembleia que não existe.
+	 */
+	@Test
+	public void testListaPautasByAssembleiaIdNaoExistente() {
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		assertEquals(0, pautaRepository.findByAssembleiaCodAssembleia(-1L, pageRequest).getContent().size());
 	}
 	
 	/**

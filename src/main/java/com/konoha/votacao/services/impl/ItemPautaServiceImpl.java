@@ -11,6 +11,7 @@ import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.repository.ItemPautaRepository;
 import com.konoha.votacao.services.ItemPautaService;
+import com.konoha.votacao.services.PautaService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class ItemPautaServiceImpl implements ItemPautaService {
 
 	private final ItemPautaRepository itemPautaRepository;
-
+	private final PautaService pautaService;
+	
 	@Override
 	public ItemPauta save(ItemPauta itemPauta) {
 	
@@ -30,7 +32,7 @@ public class ItemPautaServiceImpl implements ItemPautaService {
 
 	@Override
 	public Page<ItemPauta> findByPautaId(Long pautaId, Pageable pageable) {
-		// TODO verificar se existe pauta com o id passado
+		pautaService.findById(pautaId); // Lança exception caso não exista a pauta
 		return itemPautaRepository.findByPautaCodPauta(pautaId, pageable);
 	}
 
