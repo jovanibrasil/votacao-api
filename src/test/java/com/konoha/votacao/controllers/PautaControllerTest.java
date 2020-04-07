@@ -7,10 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,8 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.konoha.votacao.controllers.forms.PautaForm;
+import com.konoha.votacao.dto.PautaDTO;
+import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.mappers.PautaMapper;
-import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.services.PautaService;
 
@@ -41,7 +41,6 @@ public class PautaControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
-	
 	@MockBean
 	private PautaService pautaService;
 	@MockBean
@@ -49,16 +48,13 @@ public class PautaControllerTest {
 	
 	private final String TITULO = "Título";
 	private final String DESCRICAO = "Descricao";
-	private final LocalDateTime DATA_CRIACAO_PAUTA = LocalDateTime.of(2020, Month.JANUARY, 05, 14, 10);
 	private final String OBSERVACOES = "Observações";
-	private final List<ItemPauta> LISTA_ITENS_PAUTA = new ArrayList<>();
-	private final LocalDateTime INICIO_SESSAO = LocalDateTime.of(2020, Month.MARCH, 01, 10, 00);
-	private final Long DURACAO_SESSAO = 600L;
 	private final Long ASSEMBLEIA_ID = 1L;
 	private final Long PAUTA_ID = 49L;
 	
 	private PautaForm pautaForm;
 	private Pauta pauta;
+	private PautaDTO pautaDto;
 	
 	@Before
 	public void setUp() {
@@ -70,6 +66,9 @@ public class PautaControllerTest {
 		
 		pauta = new Pauta();
 		pauta.setCodPauta(PAUTA_ID);		
+	
+		pautaDto = new PautaDTO();
+		pautaDto.setCodPauta(pauta.getCodPauta());
 	}
 	
 	/**
@@ -163,6 +162,73 @@ public class PautaControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.data").isEmpty())
 				.andExpect(jsonPath("$.errors").isNotEmpty());
+	}
+	
+	/**
+	 * Busca por ID uma pauta existente no sistema.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testBuscaPautaPorId() throws Exception {
+		when(pautaService.findById(1L)).thenReturn(pauta);
+		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
+				.contentType(MediaType.APPLICATION_JSON))		
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$._links").isNotEmpty());
+	}
+	
+	/**
+	 * Busca por ID uma pauta não existente no sistema.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testBuscaPautaPorIdInvalido() throws Exception {
+		when(pautaService.findById(1L)).thenThrow(NotFoundException.class);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
+				.contentType(MediaType.APPLICATION_JSON))		
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
+	}
+	
+	/**
+	 * Testa a busca de pautas de uma assembleia.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testBuscaPautasPorAssembleia() throws Exception {
+		Page<Pauta> pautas = new PageImpl<>(Arrays.asList(pauta, pauta, pauta));
+		when(pautaService.findByAssembleiaCodAssembleia(any(), any())).thenReturn(pautas);
+		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
+				.contentType(MediaType.APPLICATION_JSON))		
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isNotEmpty());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testBuscaPautaPorAssembleiaNaoExistente() throws Exception {
+		when(pautaService.findByAssembleiaCodAssembleia(any(), any()))
+			.thenThrow(NotFoundException.class);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
+				.contentType(MediaType.APPLICATION_JSON))		
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.errors").isNotEmpty())
+				.andExpect(jsonPath("$.data").isEmpty());
 	}
 	
 	public static String asJsonString(final Object obj) {

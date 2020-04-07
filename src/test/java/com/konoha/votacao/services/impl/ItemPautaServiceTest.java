@@ -28,12 +28,15 @@ import org.springframework.data.domain.PageRequest;
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.repository.ItemPautaRepository;
+import com.konoha.votacao.services.PautaService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItemPautaServiceTest {
 
 	@Mock
 	private ItemPautaRepository itemPautaRepository;
+	@Mock
+	private PautaService pautaService;
 	@InjectMocks
 	private ItemPautaServiceImpl itemPautaService;
 	
@@ -44,7 +47,7 @@ public class ItemPautaServiceTest {
 	@Before
 	public void setUp() {
         MockitoAnnotations.initMocks(this);
-        itemPautaService = new ItemPautaServiceImpl(itemPautaRepository);
+        itemPautaService = new ItemPautaServiceImpl(itemPautaRepository, pautaService);
 		itemPauta = new ItemPauta();
 		itemPauta.setDescricao(DESCRICAO);
 		itemPauta.setTitulo(TITULO);
@@ -120,7 +123,8 @@ public class ItemPautaServiceTest {
 	 */
 	@Test(expected = NotFoundException.class)
 	public void testListaItensPautaNaoExistente() {
-		// TODO implementar a verificação de pauta no ItemPautaService
+		when(pautaService.findById(any())).thenThrow(NotFoundException.class);
+		itemPautaService.findByPautaId(1L, PageRequest.of(0, 5));
 	}
 	
 }

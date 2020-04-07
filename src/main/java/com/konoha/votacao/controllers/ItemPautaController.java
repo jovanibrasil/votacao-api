@@ -63,7 +63,7 @@ public class ItemPautaController {
 	 * @return
 	 */
 	@GetMapping("/{itemPautaId}")
-	public ResponseEntity<?> getItemPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, @PathVariable Long itemPautaId){
+	public ResponseEntity<?> buscaItemPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, @PathVariable Long itemPautaId){
 			
 		ItemPauta itemPauta = itemPautaService.findById(itemPautaId);
 		ItemPautaDTO itemPautaForm = itemPautaMapper.itemPautaToItemPautaDTO(itemPauta);
@@ -80,7 +80,7 @@ public class ItemPautaController {
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<?> getItemPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, Pageable pageable){
+	public ResponseEntity<?> listaItensPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, Pageable pageable){
 			
 		Page<ItemPauta> itemPautaPage = itemPautaService.findByPautaId(pautaId, pageable);
 		Page<ItemPautaDTO> itemPautaDtoPage = itemPautaPage.map(i -> itemPautaMapper.itemPautaToItemPautaDTO(i));		

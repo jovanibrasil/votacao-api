@@ -47,4 +47,12 @@ public class RestExceptionHandler {
 		return response;
 	}
 	
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(VotoException.class)
+	public Response<List<String>> handle(VotoException exception) {
+		Response<List<String>> response = new Response<>();
+		response.setErrors(Arrays.asList(exception.getMessage()));
+		return response;
+	}
+	
 }
