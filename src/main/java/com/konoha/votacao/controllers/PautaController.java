@@ -1,13 +1,18 @@
 package com.konoha.votacao.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.net.URI;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +28,6 @@ import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.services.PautaService;
 
 import lombok.RequiredArgsConstructor;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class PautaController {
 
 	private final PautaService pautaService;
 	private final PautaMapper pautaMapper;
-	
+
 	/**
 	 * Salva uma pauta.
 	 * 
@@ -42,20 +45,16 @@ public class PautaController {
 	 * @return
 	 */
 	@PostMapping
-	public ResponseEntity<?> salvaPauta(@RequestBody @Valid PautaForm pautaForm, 
-			@PathVariable Long assembleiaId){
-		
+	public ResponseEntity<?> salvaPauta(@RequestBody @Valid PautaForm pautaForm, @PathVariable Long assembleiaId) {
+
 		Pauta pauta = pautaService.save(pautaMapper.pautaFormToPauta(pautaForm));
-		
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequest()
-				.path("/{pautaId}")
-				.buildAndExpand(pauta.getCodPauta())
-				.toUri();
-		
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{pautaId}")
+				.buildAndExpand(pauta.getCodPauta()).toUri();
+
 		return ResponseEntity.created(uri).build();
 	}
-	
+
 	/**
 	 * Busca uma pauta por ID.
 	 * 
@@ -64,17 +63,16 @@ public class PautaController {
 	 * @return
 	 */
 	@GetMapping("/{pautaId}")
-	public ResponseEntity<PautaDTO> buscaPauta(@PathVariable Long pautaId, @PathVariable Long assembleiaId){
-		
+	public ResponseEntity<PautaDTO> buscaPauta(@PathVariable Long pautaId, @PathVariable Long assembleiaId) {
+
 		Pauta pauta = pautaService.findById(pautaId);
 		PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta);
-		Link link = linkTo(methodOn(ItemPautaController.class)
-				.listaItensPauta(assembleiaId, pauta.getCodPauta(), Pageable.unpaged()))
-				.withRel("getItensDePauta");
+		Link link = linkTo(methodOn(ItemPautaController.class).listaItensPauta(assembleiaId, pauta.getCodPauta(),
+				Pageable.unpaged())).withRel("getItensDePauta");
 		pautaDto.add(link);
 		return ResponseEntity.ok(pautaDto);
 	}
-	
+
 	/**
 	 * Busca uma uma lista de pautas de uma assembleia.
 	 * 
@@ -83,20 +81,30 @@ public class PautaController {
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<Page<PautaDTO>> listaPautasPorAssembleia(@PathVariable Long assembleiaId, Pageable pageable){
-		
+	public ResponseEntity<Page<PautaDTO>> listaPautasPorAssembleia(@PathVariable Long assembleiaId, Pageable pageable) {
+
 		Page<Pauta> pautas = pautaService.findByAssembleiaCodAssembleia(assembleiaId, pageable);
 		Page<PautaDTO> pautaDtoList = pautas.map(pauta -> {
-		 	PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta);
-		 	Link link = linkTo(methodOn(ItemPautaController.class)
-					.listaItensPauta(assembleiaId, pauta.getCodPauta(), Pageable.unpaged()))
-					.withRel("getPautas");
-		 	pautaDto.add(link);
+			PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta);
+			Link link = linkTo(methodOn(ItemPautaController.class).listaItensPauta(assembleiaId, pauta.getCodPauta(),
+					Pageable.unpaged())).withRel("getPautas");
+			pautaDto.add(link);
 			return pautaDto;
 		});
 		return ResponseEntity.ok(pautaDtoList);
 	}
 	
-	
-	
+	/**
+	 * Remove uma pauta pelo ID, iformado.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<?> remover(@PathVariable Long id) {		
+		pautaService.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+
 }
