@@ -72,7 +72,7 @@ public class AssembleiaRepositoryTest {
 		int pageSize = 10;
 		Pageable pageable = PageRequest.of(0, pageSize);
 		Page<Assembleia> assembleias = assembleiaRepository.findAll(pageable);
-		assertEquals(4, assembleias.getContent().size());
+		assertEquals(1, assembleias.getContent().size());
 	}
 
 }

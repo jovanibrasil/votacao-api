@@ -53,6 +53,12 @@ public class PautaServiceImpl implements PautaService {
 	public Page<Pauta> findByAssembleiaCodAssembleia(Long assembleiaId, Pageable pageable) {
 		return pautaRepository.findByAssembleiaCodAssembleia(assembleiaId, pageable);
 	}
+
+	@Override
+	public void deleteById(Long id) {
+		findById(id);
+		pautaRepository.deleteById(id);
+	}
 	
 	
 }

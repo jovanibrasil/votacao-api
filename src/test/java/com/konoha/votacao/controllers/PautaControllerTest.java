@@ -2,6 +2,8 @@ package com.konoha.votacao.controllers;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -229,6 +231,32 @@ public class PautaControllerTest {
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.errors").isNotEmpty())
 				.andExpect(jsonPath("$.data").isEmpty());
+	}
+	
+	/**
+	 * Testa remoção da pauta por ID
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletarPautaComSessaoExistente() throws Exception {
+		doNothing().when(pautaService).deleteById(pauta.getCodPauta());		
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/1"))						
+				.andExpect(status().isNoContent());
+	}
+	
+	/**
+	 * Testa remoção da pauta por ID invalido
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletarPautaComSessaoExistenteIDInvalido() throws Exception {		
+		doThrow(new NotFoundException("")).doNothing()
+			.when(pautaService)
+			.deleteById(PAUTA_ID);
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/"+PAUTA_ID))
+			.andExpect(status().isNotFound());
 	}
 	
 	public static String asJsonString(final Object obj) {

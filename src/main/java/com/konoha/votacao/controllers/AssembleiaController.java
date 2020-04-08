@@ -41,6 +41,7 @@ public class AssembleiaController {
 	}
 
 	/**
+	 * Busca uma uma lista de assembleia por ID
 	 * 
 	 * @param id
 	 * @return
@@ -51,7 +52,12 @@ public class AssembleiaController {
 		AssembleiaDTO assembleiaDTO = assembleiaMapper.assembleiaToAssembleiaDto(assembleia);
 		return ResponseEntity.ok(new Response<AssembleiaDTO>(assembleiaDTO));
 	}
-
+	/**
+	 * Busca uma uma lista de assembleia.
+	 * 
+	 * @param pageable
+	 * @return
+	 */
 	@GetMapping
 	public ResponseEntity<?> listarAssembleias(Pageable pageable) {
 
