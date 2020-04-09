@@ -2,11 +2,19 @@ package com.konoha.votacao.controllers;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +28,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.konoha.votacao.controllers.forms.VotoForm;
+import com.konoha.votacao.dto.VotoDTO;
+import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.exceptions.VotoException;
+import com.konoha.votacao.mappers.VotoMapper;
 import com.konoha.votacao.services.VotoService;
+import com.konoha.votacao.services.impl.modelos.ResultadoItemPauta;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,6 +45,8 @@ public class VotoControllerTest {
 	private MockMvc mvc;
 	@MockBean
 	private VotoService votoService;
+	@MockBean
+	private VotoMapper votoMapper;
 	
 	private VotoForm votoForm;
 	
@@ -111,6 +125,71 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)));
+	}
+	
+	/*
+	 * Busca votos de uma pauta existente e aberta.
+	 * 
+	 */
+	@Test
+	public void testBuscaVotosItensPauta() throws Exception {
+		
+		ResultadoItemPauta r1 = new ResultadoItemPauta(1L);
+		ResultadoItemPauta r2 = new ResultadoItemPauta(1L);
+		r1.addVotoContrario();
+		r2.addVotoFavoravel();
+		
+		List<ResultadoItemPauta> resultados = Arrays.asList(r1, r2);
+		when(votoService.computaVotosPauta(1L)).thenReturn(resultados);
+		when(votoMapper.resultadoItemPautaToVotoDto(any())).then(new Answer<VotoDTO>() {
+			@Override
+			public VotoDTO answer(InvocationOnMock invocation) throws Throwable {
+				ResultadoItemPauta r = (ResultadoItemPauta) invocation.getArgument(0);
+				VotoDTO voto = new VotoDTO();
+				voto.setItemPautaId(r.getItemPautaId());
+				voto.setVotosContrarios(r.getVotosContrarios());
+				voto.setVotosFavoraveis(r.getVotosFavoraveis());
+				return voto;
+			}
+		});
+		
+		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data").isNotEmpty())
+				.andExpect(jsonPath("$.errors").isEmpty());
+	}
+	
+	/*
+	 * Busca votos de uma pauta existente mas fechada.
+	 * 
+	 */
+	@Test
+	public void testBuscaVotosItensPautaFechada() throws Exception {
+		
+		when(votoService.computaVotosPauta(1L)).thenThrow(VotoException.class);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
+	}
+	
+	/*
+	 * Busca votos de uma pauta inexistente.
+	 * 
+	 */
+	@Test
+	public void testBuscaVotosItensPautaInexistente() throws Exception {
+		
+		when(votoService.computaVotosPauta(1L)).thenThrow(NotFoundException.class);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 	
 	public static String asJsonString(final Object obj) {

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -53,7 +54,7 @@ public class Pauta implements Serializable{
   @JoinColumn(name = "cod_assembleia", nullable = false)
   private Assembleia assembleia;
   
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "pauta")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "pauta", cascade = CascadeType.REMOVE)
   private List<ItemPauta> listaItemPautas= new ArrayList<>();
   
   @Embedded

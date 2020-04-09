@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Sessao;
 import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 import com.konoha.votacao.repository.AssembleiaRepository;
@@ -49,10 +50,16 @@ public class DataLoader implements CommandLineRunner {
 		assembleia.setTitulo("Título");
 		assembleia = assembleiaRepository.save(assembleia);
 		
+		Sessao sessao = new Sessao();
+		sessao.setDuracaoSessao(3L);
+		sessao.setInicioSessao(LocalDateTime.now().minusHours(2L));
+		
+		
 		pauta = new Pauta();
 		pauta.setTitulo("Titulo");
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta.setAssembleia(assembleia);
+		pauta.setSessao(sessao);
 		pauta = pautaRepository.save(pauta);
 		
 		itemPauta = new ItemPauta();
