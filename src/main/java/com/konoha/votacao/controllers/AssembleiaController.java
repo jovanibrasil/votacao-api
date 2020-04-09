@@ -2,11 +2,13 @@ package com.konoha.votacao.controllers;
 
 import java.net.URI;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,4 +68,17 @@ public class AssembleiaController {
 		return ResponseEntity.ok(new Response<Page<AssembleiaDTO>>(assembleiaDtoPage));
 	}
 
+	/**
+	 * Remove uma assembleia pelo ID.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@Transactional
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> remover(@PathVariable Long id) {		
+		assembleiaService.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+	
 }

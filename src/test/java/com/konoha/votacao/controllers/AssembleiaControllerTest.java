@@ -2,6 +2,8 @@ package com.konoha.votacao.controllers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -196,6 +198,30 @@ public class AssembleiaControllerTest {
 
 		mvc.perform(MockMvcRequestBuilders.get(URL)).andExpect(status().isOk());
 	}
+	
+	/**
+	 * Testa remoção da assembleia por ID
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletarAssembleia() throws Exception {
+		doNothing().when(assembleiaService).deleteById(COD_ASSEMBLEIA);		
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + COD_ASSEMBLEIA))						
+			.andExpect(status().isNoContent());
+	}
+	
+	/**
+	 * Testa remoção da assembleia por ID inválido
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testDeletarAssembleiaIdInvalido() throws Exception {
+		doThrow(NotFoundException.class).when(assembleiaService).deleteById(Long.parseLong("0000"));		
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + "0000"))						
+			.andExpect(status().isNotFound());
+	}
 
 	public static String asJsonString(final Object obj) {
 		try {
@@ -232,4 +258,10 @@ public class AssembleiaControllerTest {
 		});
 	}
 
+
+	
+	
+	
+	
+	
 }
