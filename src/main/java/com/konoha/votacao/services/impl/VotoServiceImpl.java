@@ -1,17 +1,22 @@
 package com.konoha.votacao.services.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.konoha.votacao.exceptions.VotoException;
 import com.konoha.votacao.modelo.ItemPauta;
+import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 import com.konoha.votacao.repository.VotoRepository;
 import com.konoha.votacao.services.ItemPautaService;
+import com.konoha.votacao.services.PautaService;
 import com.konoha.votacao.services.UsuarioService;
 import com.konoha.votacao.services.VotoService;
+import com.konoha.votacao.services.impl.modelos.ResultadoItemPauta;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +27,7 @@ public class VotoServiceImpl implements VotoService {
 	private final ItemPautaService itemPautaService;
 	private final VotoRepository votoRepository;
 	private final UsuarioService usuarioService;
+	private final PautaService pautaService;
 	
 	/**
 	 * Registra um voto no sistema. Um voto é dado por um usuário devidamente registrado no sistema para um item de pauta 
@@ -52,6 +58,46 @@ public class VotoServiceImpl implements VotoService {
 			throw new VotoException("Pauta não está aberta");
 		}
 		
+	}
+	
+	/**
+	 * Retorna uma lista de resultados de votação para uma pauta que
+	 * está com sessão aberta. 
+	 * 
+	 * @param pautaId é o id da pauta que se quer os resultados
+	 * 
+	 */
+	@Override
+	public List<ResultadoItemPauta> computaVotosPauta(Long pautaId) {
+		
+		Pauta pauta = pautaService.findById(pautaId);
+		if(pauta.isAberta()) throw new VotoException("Votação não está fechada ainda. Teste mais tarde.");
+		
+		return pauta.getListaItemPautas().stream().map(itemPauta -> {
+			// Conta quantos votos favoráveis e quantos contrários um item de pauta possui.
+			ResultadoItemPauta result = new ResultadoItemPauta(itemPauta.getCodItemPauta());
+			List<Voto> votos = buscaVotosByItemPautaId(itemPauta.getCodItemPauta());
+			
+			votos.stream().forEach(voto -> {
+				if(Boolean.TRUE.equals(voto.getVoto())) {
+					result.addVotoFavoravel();
+				}else {
+					result.addVotoContrario();
+				}
+			});			
+			return result;
+		}).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Busca votos relacionados a uma pauta específica.
+	 * 
+	 * @param itemPautaId é o id da pauta que se quer buscar.
+	 * @return
+	 */
+	@Override
+	public List<Voto> buscaVotosByItemPautaId(Long itemPautaId){
+		return votoRepository.findByVotoIdCodItemPauta(itemPautaId);
 	}
 	
 }

@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.konoha.votacao.modelo.Assembleia;
@@ -24,6 +25,7 @@ import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class VotoRepositoryTest {

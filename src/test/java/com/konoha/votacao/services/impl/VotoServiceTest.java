@@ -1,9 +1,12 @@
 package com.konoha.votacao.services.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -14,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.exceptions.VotoException;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.ItemPauta;
@@ -23,7 +27,9 @@ import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 import com.konoha.votacao.repository.VotoRepository;
 import com.konoha.votacao.services.ItemPautaService;
+import com.konoha.votacao.services.PautaService;
 import com.konoha.votacao.services.UsuarioService;
+import com.konoha.votacao.services.impl.modelos.ResultadoItemPauta;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VotoServiceTest {
@@ -34,19 +40,22 @@ public class VotoServiceTest {
 	private VotoRepository votoRepository;
 	@Mock
 	private UsuarioService usuarioService;
+	@Mock
+	private PautaService pautaService;
 	@InjectMocks
 	private VotoServiceImpl votoService;
 	
 	private Voto voto;
 	private Usuario usuario;
 	private Pauta pauta;
-	private ItemPauta itemPauta;
+	private ItemPauta itemPauta1;
 	private Assembleia assembleia;
 	
 	@Before
 	public void setUp() {
         MockitoAnnotations.initMocks(this);
-        votoService = new VotoServiceImpl(itemPautaService, votoRepository, usuarioService);
+        votoService = new VotoServiceImpl(itemPautaService, votoRepository,
+        		usuarioService, pautaService);
 		
 		usuario = new Usuario();
 		usuario.setCodUsuario(1L);
@@ -64,17 +73,17 @@ public class VotoServiceTest {
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta.setAssembleia(assembleia);
 		Sessao sessao = new Sessao();
-		sessao.setInicioSessao(LocalDateTime.now().minusHours(1L));
-		sessao.setDuracaoSessao(5L);
+		sessao.setInicioSessao(LocalDateTime.now().minusHours(5L));
+		sessao.setDuracaoSessao(4L);
 		pauta.setSessao(sessao);
 		
-		itemPauta = new ItemPauta();
-		itemPauta.setCodItemPauta(1L);
-		itemPauta.setTitulo("Titulo");
-		itemPauta.setDataCriacao(LocalDateTime.now());
-		itemPauta.setPauta(pauta);
+		itemPauta1 = new ItemPauta();
+		itemPauta1.setCodItemPauta(1L);
+		itemPauta1.setTitulo("Titulo");
+		itemPauta1.setDataCriacao(LocalDateTime.now());
+		itemPauta1.setPauta(pauta);
 		
-		voto = new Voto(usuario, itemPauta, true);
+		voto = new Voto(usuario, itemPauta1, true);
 		
 	}
 	
@@ -84,8 +93,14 @@ public class VotoServiceTest {
 	@Test
 	public void testSalvaVoto() {
 		
+		// configura a sessão como aberta
+		Sessao sessao = new Sessao();
+		sessao.setInicioSessao(LocalDateTime.now());
+		sessao.setDuracaoSessao(4L);
+		pauta.setSessao(sessao);
+		
 		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
-		when(itemPautaService.findById(any())).thenReturn(itemPauta);
+		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(1L,
 				usuario.getCodUsuario())).thenReturn(Optional.empty());
@@ -118,7 +133,7 @@ public class VotoServiceTest {
 		pauta.getSessao().setDuracaoSessao(0L);
 		
 		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
-		when(itemPautaService.findById(any())).thenReturn(itemPauta);
+		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(1L,
 				usuario.getCodUsuario())).thenReturn(Optional.empty());
@@ -127,5 +142,104 @@ public class VotoServiceTest {
 		
 	}
 	
+	/**
+	 * Testa a computação de votos de uma pauta, testando uma pauta com um item de
+	 * pauta, que recebeu um voto favorável.
+	 */
+	@Test
+	public void testComputaVotosPauta() {
+		List<Voto> votos = Arrays.asList(voto);
+		pauta.setListaItemPautas(Arrays.asList(itemPauta1));
+		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		
+		when(votoRepository.findByVotoIdCodItemPauta(any())).thenReturn(votos);
+		
+		List<ResultadoItemPauta> resultado = votoService.computaVotosPauta(pauta.getCodPauta());
+		ResultadoItemPauta rip = resultado.get(0);
+		
+		assertEquals(1, resultado.size());
+		assertEquals(1, rip.getVotosFavoraveis());
+		assertEquals(0, rip.getVotosContrarios());
+	}
+	
+	/**
+	 * Testa a computação de votos de uma pauta com um item de pauta
+	 * que recebeu um voto favorável e um contrário.
+	 * 
+	 */
+	@Test
+	public void testComputaVotosPautaEmpate() {
+		
+		List<Voto> votos = Arrays.asList(voto, new Voto(new Usuario(), itemPauta1, false));
+		
+		pauta.setListaItemPautas(Arrays.asList(itemPauta1));
+		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		
+		when(votoRepository.findByVotoIdCodItemPauta(any())).thenReturn(votos);
+		
+		List<ResultadoItemPauta> resultado = votoService.computaVotosPauta(pauta.getCodPauta());
+		ResultadoItemPauta rip = resultado.get(0);
+		
+		assertEquals(1, resultado.size());
+		assertEquals(1, rip.getVotosFavoraveis());
+		assertEquals(1, rip.getVotosContrarios());
+	}
+	
+	/**
+	 * Testa a computação de votos de uma pauta com dois itens pauta cada um 
+	 * com um voto vaforável.
+	 * 
+	 */
+	@Test
+	public void testComputaVotosPautaComDoisTestes() {
+		
+		ItemPauta itemPauta2 = new ItemPauta();
+		itemPauta2.setCodItemPauta(2L);
+		itemPauta2.setPauta(pauta);
+		voto = new Voto(usuario, itemPauta2, true);
+		
+		pauta.setListaItemPautas(Arrays.asList(itemPauta1, itemPauta2));
+		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		
+		when(votoRepository.findByVotoIdCodItemPauta(itemPauta1.getCodItemPauta()))
+			.thenReturn(Arrays.asList(voto));
+		
+		when(votoRepository.findByVotoIdCodItemPauta(itemPauta2.getCodItemPauta()))
+			.thenReturn(Arrays.asList(voto));
+		
+		List<ResultadoItemPauta> resultado = votoService
+				.computaVotosPauta(pauta.getCodPauta());
+		
+		assertEquals(2, resultado.size());
+		assertEquals(1, resultado.get(0).getVotosFavoraveis());
+		assertEquals(1, resultado.get(1).getVotosFavoraveis());
+	}
+	
+	/**
+	 * Testa a computação de votos de uma pauta não existente.
+	 * 
+	 */
+	@Test(expected = NotFoundException.class)
+	public void testComputaVotosPautaNaoExistente() {
+		when(pautaService.findById(pauta.getCodPauta())).thenThrow(NotFoundException.class);
+		votoService.computaVotosPauta(pauta.getCodPauta());
+	}
+	
+	/**
+	 * Testar a computação de votos em uma pauta com sessão não concuída.
+	 * 
+	 */
+	@Test(expected = VotoException.class)
+	public void testComputaVotosPautaAberta() {
+		
+		// Configura a sessão como aberta
+		Sessao sessao = new Sessao();
+		sessao.setInicioSessao(LocalDateTime.now());
+		sessao.setDuracaoSessao(4L);
+		pauta.setSessao(sessao);
+		
+		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		votoService.computaVotosPauta(pauta.getCodPauta());
+	}
 	
 }

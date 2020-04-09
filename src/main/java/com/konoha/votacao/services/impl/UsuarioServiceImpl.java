@@ -6,10 +6,13 @@ import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.UsuarioService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 	
-	private UsuarioRepository usuarioRepository;
+	private final UsuarioRepository usuarioRepository;
 	
 	/**
 	 * TODO Busca usuário por ID.

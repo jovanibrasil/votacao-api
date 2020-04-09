@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +47,7 @@ public class Assembleia implements Serializable {
   @Column(name = "data_criacao")
   private LocalDateTime dataCriacao;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "assembleia")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "assembleia", cascade = CascadeType.REMOVE)
   private List<Pauta> listaPautas = new ArrayList<>();
 
 }
