@@ -37,7 +37,7 @@ public class VotoController {
 	 */
 	@PostMapping
 	public ResponseEntity<?> salvarVoto(@RequestBody @Valid VotoForm votoForm){
-		votoService.salvarVoto(votoForm.getItemPautaId(), votoForm.getVoto());
+		votoService.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
 				.build();
@@ -53,7 +53,7 @@ public class VotoController {
 	@GetMapping("/{pautaId}")
 	public ResponseEntity<Response<List<VotoDTO>>> buscaVotosDeUmaPauta(@PathVariable Long pautaId){
 		
-		List<VotoDTO> resultados = votoService.computaVotosPauta(pautaId).stream()
+		List<VotoDTO> resultados = votoService.findResultadoVotacaoByPautaId(pautaId).stream()
 				.map(votoMapper::resultadoItemPautaToVotoDto)
 				.collect(Collectors.toList());
 		

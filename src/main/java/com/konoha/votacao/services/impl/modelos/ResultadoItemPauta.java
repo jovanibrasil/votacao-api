@@ -12,6 +12,12 @@ public class ResultadoItemPauta {
 	public ResultadoItemPauta(Long itemPautaId) {
 		this.itemPautaId = itemPautaId;
 	}
+	
+	public ResultadoItemPauta(Long itemPautaId, Long votosFavoraveis, Long votosContrarios) {
+		this.itemPautaId = itemPautaId;
+		this.votosFavoraveis = votosFavoraveis;
+		this.votosContrarios = votosContrarios;
+	}
 
 	public void addVotoFavoravel() {
 		this.votosFavoraveis += 1;
