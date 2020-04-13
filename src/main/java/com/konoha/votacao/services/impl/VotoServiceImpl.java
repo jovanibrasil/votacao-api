@@ -2,7 +2,6 @@ package com.konoha.votacao.services.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -28,6 +27,7 @@ public class VotoServiceImpl implements VotoService {
 	private final VotoRepository votoRepository;
 	private final UsuarioService usuarioService;
 	private final PautaService pautaService;
+	private final ComputadorDeVotos computadorDeVotos;
 	
 	/**
 	 * Registra um voto no sistema. Um voto é dado por um usuário devidamente registrado no sistema para um item de pauta 
@@ -36,7 +36,7 @@ public class VotoServiceImpl implements VotoService {
 	 * 
 	 */
 	@Override
-	public void salvarVoto(Long itemPautaId, Boolean votoValue) {
+	public void saveVoto(Long itemPautaId, Boolean votoValue) {
 		// TODO ID do usuário deve ser buscado do contexto de segurança
 		Long usuarioId = 1L;
 		Usuario usuario = usuarioService.buscaUsuario(usuarioId);
@@ -68,36 +68,10 @@ public class VotoServiceImpl implements VotoService {
 	 * 
 	 */
 	@Override
-	public List<ResultadoItemPauta> computaVotosPauta(Long pautaId) {
-		
+	public List<ResultadoItemPauta> findResultadoVotacaoByPautaId(Long pautaId) {
 		Pauta pauta = pautaService.findById(pautaId);
 		if(pauta.isAberta()) throw new VotoException("Votação não está fechada ainda. Teste mais tarde.");
-		
-		return pauta.getListaItemPautas().stream().map(itemPauta -> {
-			// Conta quantos votos favoráveis e quantos contrários um item de pauta possui.
-			ResultadoItemPauta result = new ResultadoItemPauta(itemPauta.getCodItemPauta());
-			List<Voto> votos = buscaVotosByItemPautaId(itemPauta.getCodItemPauta());
-			
-			votos.stream().forEach(voto -> {
-				if(Boolean.TRUE.equals(voto.getVoto())) {
-					result.addVotoFavoravel();
-				}else {
-					result.addVotoContrario();
-				}
-			});			
-			return result;
-		}).collect(Collectors.toList());
-	}
-	
-	/**
-	 * Busca votos relacionados a uma pauta específica.
-	 * 
-	 * @param itemPautaId é o id da pauta que se quer buscar.
-	 * @return
-	 */
-	@Override
-	public List<Voto> buscaVotosByItemPautaId(Long itemPautaId){
-		return votoRepository.findByVotoIdCodItemPauta(itemPautaId);
+		return computadorDeVotos.computaVotos(pauta);
 	}
 	
 }

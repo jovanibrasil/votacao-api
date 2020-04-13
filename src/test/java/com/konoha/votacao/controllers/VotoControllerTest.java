@@ -64,7 +64,7 @@ public class VotoControllerTest {
 	 */
 	@Test
 	public void testSalvaVoto() throws Exception {
-		doNothing().when(votoService).salvarVoto(votoForm.getItemPautaId(), votoForm.getVoto());
+		doNothing().when(votoService).saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)))		
@@ -106,7 +106,7 @@ public class VotoControllerTest {
 	@Test
 	public void testSalvaVotoItemPautaNaoExiste() throws Exception {
 		doThrow(VotoException.class).when(votoService)
-			.salvarVoto(votoForm.getItemPautaId(), votoForm.getVoto());
+			.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)))		
@@ -121,7 +121,7 @@ public class VotoControllerTest {
 	@Test
 	public void testSalvaVotoRepetido() throws Exception {
 		doThrow(VotoException.class).when(votoService)
-			.salvarVoto(votoForm.getItemPautaId(), votoForm.getVoto());
+			.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)));
@@ -140,7 +140,7 @@ public class VotoControllerTest {
 		r2.addVotoFavoravel();
 		
 		List<ResultadoItemPauta> resultados = Arrays.asList(r1, r2);
-		when(votoService.computaVotosPauta(1L)).thenReturn(resultados);
+		when(votoService.findResultadoVotacaoByPautaId(1L)).thenReturn(resultados);
 		when(votoMapper.resultadoItemPautaToVotoDto(any())).then(new Answer<VotoDTO>() {
 			@Override
 			public VotoDTO answer(InvocationOnMock invocation) throws Throwable {
@@ -167,7 +167,7 @@ public class VotoControllerTest {
 	@Test
 	public void testBuscaVotosItensPautaFechada() throws Exception {
 		
-		when(votoService.computaVotosPauta(1L)).thenThrow(VotoException.class);
+		when(votoService.findResultadoVotacaoByPautaId(1L)).thenThrow(VotoException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
@@ -183,7 +183,7 @@ public class VotoControllerTest {
 	@Test
 	public void testBuscaVotosItensPautaInexistente() throws Exception {
 		
-		when(votoService.computaVotosPauta(1L)).thenThrow(NotFoundException.class);
+		when(votoService.findResultadoVotacaoByPautaId(1L)).thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
