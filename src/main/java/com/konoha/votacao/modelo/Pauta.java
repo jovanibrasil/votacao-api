@@ -27,41 +27,45 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "pauta")
-public class Pauta implements Serializable{
-  
-  private static final long serialVersionUID = 1L;
+public class Pauta implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "cod_pauta")
-  @EqualsAndHashCode.Include
-  private Long codPauta;
-  
-  @Column(name = "titulo", nullable = false)
-  private String titulo;
-  
-  @Column(name = "descricao")
-  private String descricao;
-  
-  @EqualsAndHashCode.Include
-  @Column(name = "data_criacao", nullable = false)
-  private LocalDateTime dataCriacao;
-  
-  @Column(name = "observacoes")
-  private String observacoes;
-  
-  @ManyToOne
-  @JoinColumn(name = "cod_assembleia", nullable = false)
-  private Assembleia assembleia;
-  
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "pauta", cascade = CascadeType.REMOVE)
-  private List<ItemPauta> listaItemPautas= new ArrayList<>();
-  
-  @Embedded
-  private Sessao sessao;
+	private static final long serialVersionUID = 1L;
 
-  public boolean isAberta() {
-	  return sessao.isAberta();
-  }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "cod_pauta")
+	@EqualsAndHashCode.Include
+	private Long codPauta;
+
+	@Column(name = "titulo", nullable = false)
+	private String titulo;
+
+	@Column(name = "descricao")
+	private String descricao;
+
+	@EqualsAndHashCode.Include
+	@Column(name = "data_criacao", nullable = false)
+	private LocalDateTime dataCriacao;
+
+	@Column(name = "observacoes")
+	private String observacoes;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_assembleia", nullable = false)
+	private Assembleia assembleia;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pauta", cascade = CascadeType.REMOVE)
+	private List<ItemPauta> listaItemPautas = new ArrayList<>();
+
+	@Embedded
+	private Sessao sessao;
+
+	public boolean isAberta() {
+		return sessao.isAberta();
+	}
+
+	public LocalDateTime getDataFechamento() {
+		return sessao.getDataFechamento();
+	}
 
 }
