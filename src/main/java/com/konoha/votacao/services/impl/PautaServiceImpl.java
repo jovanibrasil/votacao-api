@@ -11,6 +11,7 @@ import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.repository.PautaRepository;
 import com.konoha.votacao.services.PautaService;
+import com.konoha.votacao.services.ResultadoVotacaoSchedulerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,17 +20,21 @@ import lombok.RequiredArgsConstructor;
 public class PautaServiceImpl implements PautaService {
 
 	private final PautaRepository pautaRepository;
-
+	private final ResultadoVotacaoSchedulerService resultadoVotacaoScheduler;
+	
 	/**
 	 * Salva uma pauta no sistema.
 	 * 
 	 */
 	@Override
 	public Pauta save(Pauta pauta) {
-		
 		pauta.setDataCriacao(LocalDateTime.now());
-		
-		return pautaRepository.save(pauta);
+		pauta = pautaRepository.save(pauta);
+		if(pauta.getSessao().getInicioSessao() != null) {
+			// faz agendamento do envio de resultado
+			resultadoVotacaoScheduler.scheduleTask(pauta); 
+		} 
+		return pauta;
 	}
 
 	/**

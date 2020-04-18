@@ -47,6 +47,7 @@ public class PautaController {
 	@PostMapping
 	public ResponseEntity<?> salvaPauta(@RequestBody @Valid PautaForm pautaForm, @PathVariable Long assembleiaId) {
 
+		pautaForm.setAssembleiaId(assembleiaId);
 		Pauta pauta = pautaService.save(pautaMapper.pautaFormToPauta(pautaForm));
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{pautaId}")

@@ -3,6 +3,8 @@ package com.konoha.votacao.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.konoha.votacao.exceptions.VotoException;
@@ -35,6 +37,7 @@ public class VotoServiceImpl implements VotoService {
 	 * a requisição chega e é interceptada, então o token é extraído do cabeçalho Authorization. 
 	 * 
 	 */
+	@Transactional
 	@Override
 	public void saveVoto(Long itemPautaId, Boolean votoValue) {
 		// TODO ID do usuário deve ser buscado do contexto de segurança
@@ -67,6 +70,7 @@ public class VotoServiceImpl implements VotoService {
 	 * @param pautaId é o id da pauta que se quer os resultados
 	 * 
 	 */
+	@Transactional
 	@Override
 	public List<ResultadoItemPauta> findResultadoVotacaoByPautaId(Long pautaId) {
 		Pauta pauta = pautaService.findById(pautaId);

@@ -1,4 +1,4 @@
-package com.konoha.votacao.configs;
+package com.konoha.votacao.configs.data;
 
 import java.time.LocalDateTime;
 

@@ -27,13 +27,17 @@ import org.springframework.data.domain.PageRequest;
 
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Sessao;
 import com.konoha.votacao.repository.PautaRepository;
+import com.konoha.votacao.services.ResultadoVotacaoSchedulerService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PautaServiceTest {
 
 	@Mock
 	private PautaRepository pautaRepository;
+	@Mock
+	private ResultadoVotacaoSchedulerService resultadoVotacaoScheduler;
 	@InjectMocks
 	private PautaServiceImpl pautaService;
 	
@@ -44,10 +48,12 @@ public class PautaServiceTest {
 	@Before
 	public void setUp() {
         MockitoAnnotations.initMocks(this);
-        pautaService = new PautaServiceImpl(pautaRepository);
+        pautaService = new PautaServiceImpl(pautaRepository, resultadoVotacaoScheduler);
         pauta = new Pauta();
         pauta.setDescricao(DESCRICAO);
         pauta.setTitulo(TITULO);
+        Sessao sessao = new Sessao();
+        pauta.setSessao(sessao);
 	}
 	
 	/**

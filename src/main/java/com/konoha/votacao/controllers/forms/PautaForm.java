@@ -1,9 +1,11 @@
 package com.konoha.votacao.controllers.forms;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +23,9 @@ public class PautaForm {
 	private String descricao;
 	@Size(max = 150)
 	private String observacoes;
-	@NotNull @Positive
 	private Long assembleiaId;
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+	private LocalDateTime inicioSessao;
+	private Long duracao;
 	
 }
