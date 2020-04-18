@@ -11,7 +11,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Sessao;
 import com.konoha.votacao.repository.PautaRepository;
 import com.konoha.votacao.services.ResultadoVotacaoSchedulerService;
 
@@ -52,6 +52,8 @@ public class PautaServiceTest {
         pauta = new Pauta();
         pauta.setDescricao(DESCRICAO);
         pauta.setTitulo(TITULO);
+        Sessao sessao = new Sessao();
+        pauta.setSessao(sessao);
 	}
 	
 	/**
@@ -60,7 +62,6 @@ public class PautaServiceTest {
 	 */
 	@Test
 	public void testSavePauta() {
-		when(resultadoVotacaoScheduler.scheduleTask(any())).thenReturn(UUID.randomUUID());
 		when(pautaRepository.save(any())).thenAnswer(new Answer<Pauta>() {
 			@Override
 			public Pauta answer(InvocationOnMock invocation) throws Throwable {
