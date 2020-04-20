@@ -83,7 +83,7 @@ public class PautaRepositoryTest {
 	@Test
 	public void testSavePautaValida() {
 		pauta = pautaRepository.save(pauta);
-		assertNotNull(pauta.getCodPauta());
+		assertNotNull(pauta.getId());
 	}
 	
 	/**
@@ -114,9 +114,9 @@ public class PautaRepositoryTest {
 	public void testBuscaPautaPorId() {
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pauta = pautaRepository.save(pauta);
-		assertTrue(pautaRepository.findById(pauta.getCodPauta()).isPresent());
+		assertTrue(pautaRepository.findById(pauta.getId()).isPresent());
 	}
 	
 	/**
@@ -127,13 +127,13 @@ public class PautaRepositoryTest {
 	public void testListaPautas() {
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		assertEquals(4, pautaRepository.findAll().size());
 	}
@@ -146,16 +146,16 @@ public class PautaRepositoryTest {
 	public void testListaPautasByAssembleiaId() {
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		entityManager.detach(pauta);
-		pauta.setCodPauta(null);
+		pauta.setId(null);
 		pautaRepository.save(pauta);
 		PageRequest pageRequest = PageRequest.of(0, 5);
-		assertEquals(4, pautaRepository.findByAssembleiaCodAssembleia(assembleia.getCodAssembleia(), pageRequest).getContent().size());
+		assertEquals(4, pautaRepository.findByAssembleiaId(assembleia.getId(), pageRequest).getContent().size());
 	}
 	
 	/**
@@ -165,7 +165,7 @@ public class PautaRepositoryTest {
 	@Test
 	public void testListaPautasByAssembleiaIdNaoExistente() {
 		PageRequest pageRequest = PageRequest.of(0, 5);
-		assertEquals(0, pautaRepository.findByAssembleiaCodAssembleia(-1L, pageRequest).getContent().size());
+		assertEquals(0, pautaRepository.findByAssembleiaId(-1L, pageRequest).getContent().size());
 	}
 	
 	/**
@@ -175,8 +175,8 @@ public class PautaRepositoryTest {
 	@Test
 	public void testDeletePautaPorId() {
 		pauta = pautaRepository.save(pauta);
-		pautaRepository.deleteById(pauta.getCodPauta());
-		assertFalse(pautaRepository.findById(pauta.getCodPauta()).isPresent());
+		pautaRepository.deleteById(pauta.getId());
+		assertFalse(pautaRepository.findById(pauta.getId()).isPresent());
 	}
 	
 	/**

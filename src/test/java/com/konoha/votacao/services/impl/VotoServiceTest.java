@@ -60,17 +60,17 @@ public class VotoServiceTest {
         		usuarioService, pautaService, computadorDeVotos);
 		
 		usuario = new Usuario();
-		usuario.setCodUsuario(1L);
+		usuario.setId(1L);
 		usuario.setCpf("00000000000");
 		usuario.setNomeUsuario("nomeUsuario");
 		usuario.setSenha("123456");
 		
 		assembleia = new Assembleia();
 		assembleia.setTitulo("Título");
-		assembleia.setCodAssembleia(1L);
+		assembleia.setId(1L);
 		
 		pauta = new Pauta();
-		pauta.setCodPauta(1L);
+		pauta.setId(1L);
 		pauta.setTitulo("Titulo");
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta.setAssembleia(assembleia);
@@ -80,7 +80,7 @@ public class VotoServiceTest {
 		pauta.setSessao(sessao);
 		
 		itemPauta1 = new ItemPauta();
-		itemPauta1.setCodItemPauta(1L);
+		itemPauta1.setId(1L);
 		itemPauta1.setTitulo("Titulo");
 		itemPauta1.setDataCriacao(LocalDateTime.now());
 		itemPauta1.setPauta(pauta);
@@ -104,8 +104,8 @@ public class VotoServiceTest {
 		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
-		when(votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(1L,
-				usuario.getCodUsuario())).thenReturn(Optional.empty());
+		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
+				usuario.getId())).thenReturn(Optional.empty());
 		
 		when(votoRepository.save(any())).thenReturn(voto);
 		
@@ -121,8 +121,8 @@ public class VotoServiceTest {
 	public void testSalvaVotoRepetido() {
 		
 		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
-		when(votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(1L,
-				usuario.getCodUsuario())).thenReturn(Optional.of(voto));
+		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
+				usuario.getId())).thenReturn(Optional.of(voto));
 		votoService.saveVoto(1L, true);
 		
 	}
@@ -137,8 +137,8 @@ public class VotoServiceTest {
 		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
-		when(votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(1L,
-				usuario.getCodUsuario())).thenReturn(Optional.empty());
+		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
+				usuario.getId())).thenReturn(Optional.empty());
 		
 		votoService.saveVoto(1L, true);
 		
@@ -152,10 +152,10 @@ public class VotoServiceTest {
 	public void testComputaVotosPauta() {
 		List<ResultadoItemPauta> resultados = Arrays.asList(new ResultadoItemPauta(1L, 1L, 0L));
 		
-		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		when(pautaService.findById(pauta.getId())).thenReturn(pauta);
 		when(computadorDeVotos.computaVotos(any())).thenReturn(resultados);
 		
-		List<ResultadoItemPauta> resultado = votoService.findResultadoVotacaoByPautaId(pauta.getCodPauta());
+		List<ResultadoItemPauta> resultado = votoService.findResultadoVotacaoByPautaId(pauta.getId());
 		ResultadoItemPauta rip = resultado.get(0);
 		
 		assertEquals(1, resultado.size());
@@ -173,10 +173,10 @@ public class VotoServiceTest {
 		
 		List<ResultadoItemPauta> resultados = Arrays.asList(new ResultadoItemPauta(1L, 1L, 1L));
 		
-		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		when(pautaService.findById(pauta.getId())).thenReturn(pauta);
 		when(computadorDeVotos.computaVotos(any())).thenReturn(resultados);
 		
-		List<ResultadoItemPauta> resultado = votoService.findResultadoVotacaoByPautaId(pauta.getCodPauta());
+		List<ResultadoItemPauta> resultado = votoService.findResultadoVotacaoByPautaId(pauta.getId());
 		ResultadoItemPauta rip = resultado.get(0);
 		
 		assertEquals(1, resultado.size());
@@ -196,11 +196,11 @@ public class VotoServiceTest {
 				new ResultadoItemPauta(1L, 1L, 0L),
 				new ResultadoItemPauta(1L, 1L, 0L));
 		
-		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
+		when(pautaService.findById(pauta.getId())).thenReturn(pauta);
 		when(computadorDeVotos.computaVotos(any())).thenReturn(resultados);
 		
 		List<ResultadoItemPauta> resultado = votoService
-				.findResultadoVotacaoByPautaId(pauta.getCodPauta());
+				.findResultadoVotacaoByPautaId(pauta.getId());
 		
 		assertEquals(2, resultado.size());
 		assertEquals(1, resultado.get(0).getVotosFavoraveis());
@@ -213,8 +213,8 @@ public class VotoServiceTest {
 	 */
 	@Test(expected = NotFoundException.class)
 	public void testComputaVotosPautaNaoExistente() {
-		when(pautaService.findById(pauta.getCodPauta())).thenThrow(NotFoundException.class);
-		votoService.findResultadoVotacaoByPautaId(pauta.getCodPauta());
+		when(pautaService.findById(pauta.getId())).thenThrow(NotFoundException.class);
+		votoService.findResultadoVotacaoByPautaId(pauta.getId());
 	}
 	
 	/**
@@ -230,8 +230,8 @@ public class VotoServiceTest {
 		sessao.setDuracaoSessao(4L);
 		pauta.setSessao(sessao);
 		
-		when(pautaService.findById(pauta.getCodPauta())).thenReturn(pauta);
-		votoService.findResultadoVotacaoByPautaId(pauta.getCodPauta());
+		when(pautaService.findById(pauta.getId())).thenReturn(pauta);
+		votoService.findResultadoVotacaoByPautaId(pauta.getId());
 	}
 	
 }

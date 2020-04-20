@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.konoha.votacao.dto.Message;
+import com.konoha.votacao.dto.MessageDTO;
 import com.konoha.votacao.dto.VotoDTO;
 import com.konoha.votacao.mappers.VotoMapper;
 import com.konoha.votacao.modelo.Pauta;
@@ -31,9 +31,9 @@ public class ResultadoVotacaoTask implements Runnable {
 	@Override
 	public void run() {
 		log.info("Sending message ...");
-		List<VotoDTO> votos = votoService.findResultadoVotacaoByPautaId(pauta.getCodPauta())
+		List<VotoDTO> votos = votoService.findResultadoVotacaoByPautaId(pauta.getId())
 			.stream().map(votoMapper::resultadoItemPautaToVotoDto).collect(Collectors.toList());	
-		Message message = new Message(votos);
+		MessageDTO message = new MessageDTO(votos);
 		asyncMessageService.sendMessage(message);
 	}	
 	

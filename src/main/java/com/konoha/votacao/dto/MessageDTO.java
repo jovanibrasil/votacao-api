@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message implements Serializable {
+public class MessageDTO implements Serializable {
 
 	private static final long serialVersionUID = -5787983616724721650L;
 

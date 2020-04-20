@@ -32,7 +32,7 @@ public class Assembleia implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "cod_assembleia")
   @EqualsAndHashCode.Include
-  private Long codAssembleia;
+  private Long id;
 
   @Column(name = "titulo", nullable = false)
   private String titulo;

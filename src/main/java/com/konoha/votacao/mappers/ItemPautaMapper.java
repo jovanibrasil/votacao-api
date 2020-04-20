@@ -2,7 +2,6 @@ package com.konoha.votacao.mappers;
 
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import com.konoha.votacao.controllers.forms.ItemPautaForm;
 import com.konoha.votacao.dto.ItemPautaDTO;
@@ -13,7 +12,6 @@ import com.konoha.votacao.modelo.ItemPauta;
 public interface ItemPautaMapper {
 	
 	ItemPauta itemPautaFormToItemPauta(ItemPautaForm itemPautaForm);
-	@Mapping(source = "codItemPauta", target = "id")
 	ItemPautaDTO itemPautaToItemPautaDTO(ItemPauta itemPauta);
 
 }

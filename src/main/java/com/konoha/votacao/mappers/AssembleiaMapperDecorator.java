@@ -24,7 +24,7 @@ public abstract class AssembleiaMapperDecorator implements AssembleiaMapper {
 	public AssembleiaDTO assembleiaToAssembleiaDto(Assembleia assembleia) {
 		AssembleiaDTO assembleiaDTO = assembleiaMapper.assembleiaToAssembleiaDto(assembleia);
 		Link link = linkTo(methodOn(PautaController.class)
-				.listaPautasPorAssembleia(assembleia.getCodAssembleia(), Pageable.unpaged()))
+				.listaPautasPorAssembleia(assembleia.getId(), Pageable.unpaged()))
 				.withRel("getPautas");
 		assembleiaDTO.add(link);
 		return assembleiaDTO;

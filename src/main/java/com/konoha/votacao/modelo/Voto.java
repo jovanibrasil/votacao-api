@@ -25,8 +25,8 @@ public class Voto implements Serializable {
   private VotoId votoId;
   
   public Voto(Usuario usuario, ItemPauta itemPauta, Boolean voto) {
-	  this.votoId = new VotoId(itemPauta.getCodItemPauta(), 
-			  usuario.getCodUsuario());
+	  this.votoId = new VotoId(itemPauta.getId(), 
+			  usuario.getId());
 	  this.voto = voto;
   }
 

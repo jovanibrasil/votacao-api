@@ -53,7 +53,7 @@ import com.konoha.votacao.services.AssembleiaService;
 @ActiveProfiles("test")
 public class AssembleiaControllerTest {
 
-	private static final Long COD_ASSEMBLEIA = 1L;
+	private static final Long ASSEMBLEIA_ID = 1L;
 	private static final String TITULO = "Aumento de investimento";
 	private static final String DESCRICAO = "Aumento do investimento agrário";
 	private static final LocalDateTime DATA_ASSEMBLEIA = LocalDateTime.of(2020, 03, 30, 20, 0);
@@ -82,7 +82,7 @@ public class AssembleiaControllerTest {
 		assembleiaRepository.deleteAll();
 
 		assembleia = new Assembleia();
-		assembleia.setCodAssembleia(COD_ASSEMBLEIA);
+		assembleia.setId(ASSEMBLEIA_ID);
 		assembleia.setTitulo(TITULO);
 		assembleia.setDescricao(DESCRICAO);
 		assembleia.setDataAssembleia(DATA_ASSEMBLEIA);
@@ -92,7 +92,7 @@ public class AssembleiaControllerTest {
 
 		assembleiaDTO = new AssembleiaDTO();
 
-		assembleiaDTO.setCodAssembleia(COD_ASSEMBLEIA);
+		assembleiaDTO.setId(ASSEMBLEIA_ID);
 		assembleiaDTO.setTitulo(TITULO);
 		assembleiaDTO.setDescricao(DESCRICAO);
 		assembleiaDTO.setDataAssembleia(DATA_ASSEMBLEIA);
@@ -156,15 +156,15 @@ public class AssembleiaControllerTest {
 		objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
         configJsonProvider(objectMapper);
 
-		assembleiaDTO.setCodAssembleia(COD_ASSEMBLEIA);
-		when(assembleiaService.findById(COD_ASSEMBLEIA)).thenReturn(assembleia);
+		assembleiaDTO.setId(ASSEMBLEIA_ID);
+		when(assembleiaService.findById(ASSEMBLEIA_ID)).thenReturn(assembleia);
 		when(assembleiaMapper.assembleiaDtoToAssembleia(any())).thenReturn(assembleia);
 		when(assembleiaMapper.assembleiaToAssembleiaDto(any())).thenReturn(assembleiaDTO);
 
 		mvc.perform(MockMvcRequestBuilders.get(URL + "/1")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.codAssembleia", is(1L)));
+				.andExpect(jsonPath("$.data.id", is(1L)));
 
-		verify(assembleiaService, times(1)).findById(COD_ASSEMBLEIA);
+		verify(assembleiaService, times(1)).findById(ASSEMBLEIA_ID);
 	}
 
 	/**
@@ -206,8 +206,8 @@ public class AssembleiaControllerTest {
 	 */
 	@Test
 	public void testDeletarAssembleia() throws Exception {
-		doNothing().when(assembleiaService).deleteById(COD_ASSEMBLEIA);		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + COD_ASSEMBLEIA))						
+		doNothing().when(assembleiaService).deleteById(ASSEMBLEIA_ID);		
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + ASSEMBLEIA_ID))						
 			.andExpect(status().isNoContent());
 	}
 	

@@ -29,7 +29,7 @@ public class ItemPauta implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "cod_item_pauta")
   @EqualsAndHashCode.Include
-  private Long codItemPauta;
+  private Long id;
 
   @Column(name = "titulo", nullable = false)
   private String titulo;

@@ -49,7 +49,7 @@ public class ItemPautaController {
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.path("/{itemPautaId}")
-				.buildAndExpand(itemPauta.getCodItemPauta())
+				.buildAndExpand(itemPauta.getId())
 				.toUri();
 		return ResponseEntity.created(uri).build();
 	}

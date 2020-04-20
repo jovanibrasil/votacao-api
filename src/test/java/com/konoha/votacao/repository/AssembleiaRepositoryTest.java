@@ -58,7 +58,7 @@ public class AssembleiaRepositoryTest {
 	@Test
 	public void testSavePautaValida() {
 		assembleia = assembleiaRepository.save(assembleia);
-		assertNotNull(assembleia.getCodAssembleia());
+		assertNotNull(assembleia.getId());
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class AssembleiaRepositoryTest {
 	public void testDeletePautaValida() {
 		assembleia = assembleiaRepository.save(assembleia);
 		assembleiaRepository.delete(assembleia);
-		assertFalse(assembleiaRepository.findById(assembleia.getCodAssembleia()).isPresent());
+		assertFalse(assembleiaRepository.findById(assembleia.getId()).isPresent());
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class AssembleiaRepositoryTest {
 	@Test
 	public void testFindAssembleiaPorId() {
 		assembleia = assembleiaRepository.save(assembleia);
-		Optional<Assembleia> response = assembleiaRepository.findById(assembleia.getCodAssembleia());
+		Optional<Assembleia> response = assembleiaRepository.findById(assembleia.getId());
 		assertTrue(response.isPresent());
 	}
 

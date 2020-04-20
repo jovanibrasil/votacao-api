@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter @Setter
 public class PautaDTO extends RepresentationModel<PautaDTO> {
 
-	private Long codPauta;
+	private Long id;
 	private String titulo;
 	private String descricao;
 	@JsonFormat(pattern = "dd/MM/yyyy hh:mm")

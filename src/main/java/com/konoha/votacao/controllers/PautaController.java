@@ -47,7 +47,7 @@ public class PautaController {
 		Pauta pauta = pautaService.save(pautaMapper.pautaFormToPauta(pautaForm));
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{pautaId}")
-				.buildAndExpand(pauta.getCodPauta()).toUri();
+				.buildAndExpand(pauta.getId()).toUri();
 
 		return ResponseEntity.created(uri).build();
 	}
@@ -77,7 +77,7 @@ public class PautaController {
 	@GetMapping
 	public ResponseEntity<Page<PautaDTO>> listaPautasPorAssembleia(@PathVariable Long assembleiaId, Pageable pageable) {
 
-		Page<Pauta> pautas = pautaService.findByAssembleiaCodAssembleia(assembleiaId, pageable);
+		Page<Pauta> pautas = pautaService.findByAssembleiaId(assembleiaId, pageable);
 		Page<PautaDTO> pautaDtoList = pautas.map(pauta -> pautaMapper.pautaToPautaDto(pauta, assembleiaId));
 		return ResponseEntity.ok(pautaDtoList);
 	}

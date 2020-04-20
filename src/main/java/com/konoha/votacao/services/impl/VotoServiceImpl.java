@@ -45,7 +45,7 @@ public class VotoServiceImpl implements VotoService {
 		Usuario usuario = usuarioService.buscaUsuario(usuarioId);
 		
 		// Verifica se o voto já foi cadastrado no sistema
-		Optional<Voto> optVotoSalvo = votoRepository.findByVotoIdCodItemPautaAndVotoIdCodUsuario(itemPautaId, usuario.getCodUsuario());
+		Optional<Voto> optVotoSalvo = votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPautaId, usuario.getId());
 		if(optVotoSalvo.isPresent()) {
 			throw new VotoException("Voto já registrado no sistema.");
 		}

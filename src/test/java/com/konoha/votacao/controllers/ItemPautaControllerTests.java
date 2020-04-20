@@ -67,7 +67,7 @@ public class ItemPautaControllerTests {
 	private final String DESCRICAO = "Descrição";
 	private final String TITULO = "Título";
 	private final Long PAUTA_ID = 2L;
-	private final long COD_ITEM_PAUTA = 49;
+	private final long ITEM_PAUTA_ID = 49;
 	private final LocalDateTime CREATION_DATE = LocalDateTime.now();
 
 	@Before
@@ -80,13 +80,13 @@ public class ItemPautaControllerTests {
 		itemPauta = new ItemPauta();
 		itemPauta.setDescricao("Descrição");
 		itemPauta.setTitulo("Título");
-		itemPauta.setCodItemPauta(COD_ITEM_PAUTA);
+		itemPauta.setId(ITEM_PAUTA_ID);
 		Pauta pauta = new Pauta();
-		pauta.setCodPauta(PAUTA_ID);
+		pauta.setId(PAUTA_ID);
 		itemPauta.setPauta(pauta);
 
 		itemPautaDto = new ItemPautaDTO();
-		itemPautaDto.setId(COD_ITEM_PAUTA);
+		itemPautaDto.setId(ITEM_PAUTA_ID);
 		itemPautaDto.setTitulo(TITULO);
 		itemPautaDto.setDescricao(DESCRICAO);
 		itemPautaDto.setDataCriacao(CREATION_DATE);
@@ -194,7 +194,7 @@ public class ItemPautaControllerTests {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data").isNotEmpty())
 				.andExpect(jsonPath("$.errors").isEmpty())
-				.andExpect(jsonPath("$.data.id", equalTo(COD_ITEM_PAUTA)))
+				.andExpect(jsonPath("$.data.id", equalTo(ITEM_PAUTA_ID)))
 				.andExpect(jsonPath("$.data.titulo", equalTo(TITULO)))
 				.andExpect(jsonPath("$.data.descricao", equalTo(DESCRICAO)))
 				.andExpect(jsonPath("$.data.dataCriacao", equalTo(formatedDate)));

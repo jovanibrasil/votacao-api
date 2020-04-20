@@ -55,8 +55,8 @@ public class PautaServiceImpl implements PautaService {
 	 * 
 	 */
 	@Override
-	public Page<Pauta> findByAssembleiaCodAssembleia(Long assembleiaId, Pageable pageable) {
-		return pautaRepository.findByAssembleiaCodAssembleia(assembleiaId, pageable);
+	public Page<Pauta> findByAssembleiaId(Long assembleiaId, Pageable pageable) {
+		return pautaRepository.findByAssembleiaId(assembleiaId, pageable);
 	}
 
 	@Override

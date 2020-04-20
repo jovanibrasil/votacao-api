@@ -13,7 +13,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.konoha.votacao.dto.Message;
+import com.konoha.votacao.dto.MessageDTO;
 
 
 @Configuration
@@ -29,7 +29,7 @@ public class KafkaProducerConfig {
 	 * @return
 	 */
 	@Bean
-	public ProducerFactory<String, Message> producerFactory() {
+	public ProducerFactory<String, MessageDTO> producerFactory() {
 		Map<String, Object> configProps = new HashMap<>();
 		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
 		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -44,7 +44,7 @@ public class KafkaProducerConfig {
 	 * @return
 	 */
 	@Bean
-	public KafkaTemplate<String, Message> kafkaTemplate(){
+	public KafkaTemplate<String, MessageDTO> kafkaTemplate(){
 		return new KafkaTemplate<>(producerFactory());
 	}
 	

@@ -68,10 +68,10 @@ public class PautaControllerTest {
 		pautaForm.setTitulo(TITULO);
 		
 		pauta = new Pauta();
-		pauta.setCodPauta(PAUTA_ID);		
+		pauta.setId(PAUTA_ID);		
 	
 		pautaDto = new PautaDTO();
-		pautaDto.setCodPauta(pauta.getCodPauta());
+		pautaDto.setId(pauta.getId());
 		pautaDto.add(new Link("/"));
 	}
 	
@@ -209,7 +209,7 @@ public class PautaControllerTest {
 	@Test
 	public void testBuscaPautasPorAssembleia() throws Exception {
 		Page<Pauta> pautas = new PageImpl<>(Arrays.asList(pauta, pauta, pauta));
-		when(pautaService.findByAssembleiaCodAssembleia(any(), any())).thenReturn(pautas);
+		when(pautaService.findByAssembleiaId(any(), any())).thenReturn(pautas);
 		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
@@ -225,7 +225,7 @@ public class PautaControllerTest {
 	 */
 	@Test
 	public void testBuscaPautaPorAssembleiaNaoExistente() throws Exception {
-		when(pautaService.findByAssembleiaCodAssembleia(any(), any()))
+		when(pautaService.findByAssembleiaId(any(), any()))
 			.thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
@@ -242,7 +242,7 @@ public class PautaControllerTest {
 	 */
 	@Test
 	public void testDeletarPautaComSessaoExistente() throws Exception {
-		doNothing().when(pautaService).deleteById(pauta.getCodPauta());		
+		doNothing().when(pautaService).deleteById(pauta.getId());		
 		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/1"))						
 				.andExpect(status().isNoContent());
 	}

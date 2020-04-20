@@ -38,7 +38,7 @@ public class AssembleiaController {
 	public ResponseEntity<?> create(@Valid @RequestBody AssembleiaDTO assembleiaDto) {
 		Assembleia assembleia = assembleiaService.save(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDto));
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/assembleias/{assembleiaId}")
-				.buildAndExpand(assembleia.getCodAssembleia()).toUri();
+				.buildAndExpand(assembleia.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 

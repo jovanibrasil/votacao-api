@@ -67,7 +67,7 @@ public class PautaServiceTest {
 			public Pauta answer(InvocationOnMock invocation) throws Throwable {
 				Object[] args = invocation.getArguments();
 				Pauta pauta = (Pauta) args[0];
-				pauta.setCodPauta(1L);
+				pauta.setId(1L);
 				return pauta;
 			}
 		});
@@ -77,7 +77,7 @@ public class PautaServiceTest {
 		Long diferencaDeTempo = ChronoUnit.SECONDS
 				.between(pauta.getDataCriacao(), LocalDateTime.now());
 		assertTrue(diferencaDeTempo.doubleValue() >= 0.0);
-		assertNotNull(pauta.getCodPauta());
+		assertNotNull(pauta.getId());
 	}
 	
 	/**
@@ -85,11 +85,11 @@ public class PautaServiceTest {
 	 */
 	@Test
 	public void testBuscaPautaPorId() {
-		Long pautaId = pauta.getCodPauta();
+		Long pautaId = pauta.getId();
 		when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
 		pauta = pautaService.findById(pautaId);
 		assertNotNull(pauta);
-		assertEquals(pautaId, pauta.getCodPauta());
+		assertEquals(pautaId, pauta.getId());
 	}
 	
 	/**
@@ -110,10 +110,10 @@ public class PautaServiceTest {
 		Long assembleiaId = 1L;
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		List<Pauta> pautas = Arrays.asList(pauta, pauta, pauta);
-		when(pautaRepository.findByAssembleiaCodAssembleia(assembleiaId, pageRequest))
+		when(pautaRepository.findByAssembleiaId(assembleiaId, pageRequest))
 			.thenReturn(new PageImpl<>(pautas));
 		
-		Page<Pauta> page = pautaService.findByAssembleiaCodAssembleia(assembleiaId, pageRequest);
+		Page<Pauta> page = pautaService.findByAssembleiaId(assembleiaId, pageRequest);
 		assertEquals(3, page.getContent().size());
 	}
 	
@@ -125,10 +125,10 @@ public class PautaServiceTest {
 		Long assembleiaId = 1L;
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		
-		when(pautaRepository.findByAssembleiaCodAssembleia(assembleiaId, pageRequest))
+		when(pautaRepository.findByAssembleiaId(assembleiaId, pageRequest))
 			.thenReturn(new PageImpl<>(Arrays.asList()));
 		
-		Page<Pauta> page = pautaService.findByAssembleiaCodAssembleia(assembleiaId, pageRequest);
+		Page<Pauta> page = pautaService.findByAssembleiaId(assembleiaId, pageRequest);
 		assertEquals(0, page.getContent().size());
 	}
 	

@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.konoha.votacao.modelo.Pauta;
 
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
-	Page<Pauta> findByAssembleiaCodAssembleia(Long codAssembleia, Pageable pageable);
+	Page<Pauta> findByAssembleiaId(Long id, Pageable pageable);
 }

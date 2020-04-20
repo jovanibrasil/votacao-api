@@ -40,7 +40,7 @@ public abstract class PautaMapperDecorator implements PautaMapper {
 	public PautaDTO pautaToPautaDto(Pauta pauta, Long assembleiaId) {
 		PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta, assembleiaId);
 		
-		Link link = linkTo(methodOn(ItemPautaController.class).listaItensPauta(assembleiaId, pauta.getCodPauta(),
+		Link link = linkTo(methodOn(ItemPautaController.class).listaItensPauta(assembleiaId, pauta.getId(),
 				Pageable.unpaged())).withRel("getItensPauta");
 		pautaDto.add(link);
 		

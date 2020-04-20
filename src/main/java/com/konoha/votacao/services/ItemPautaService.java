@@ -8,5 +8,5 @@ import com.konoha.votacao.modelo.ItemPauta;
 public interface ItemPautaService {
 	ItemPauta save(ItemPauta itemPauta);
 	ItemPauta findById(Long id);
-	Page<ItemPauta> findByPautaId(Long id, Pageable pageable);
+	Page<ItemPauta> findByPautaId(Long pautaId, Pageable pageable);
 }
