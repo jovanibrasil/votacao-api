@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -71,6 +72,7 @@ public class PautaControllerTest {
 	
 		pautaDto = new PautaDTO();
 		pautaDto.setCodPauta(pauta.getCodPauta());
+		pautaDto.add(new Link("/"));
 	}
 	
 	/**
@@ -174,9 +176,9 @@ public class PautaControllerTest {
 	@Test
 	public void testBuscaPautaPorId() throws Exception {
 		when(pautaService.findById(1L)).thenReturn(pauta);
-		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
-		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/" + ASSEMBLEIA_ID + "/pautas/1")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty())
@@ -208,7 +210,7 @@ public class PautaControllerTest {
 	public void testBuscaPautasPorAssembleia() throws Exception {
 		Page<Pauta> pautas = new PageImpl<>(Arrays.asList(pauta, pauta, pauta));
 		when(pautaService.findByAssembleiaCodAssembleia(any(), any())).thenReturn(pautas);
-		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
 				.contentType(MediaType.APPLICATION_JSON))		

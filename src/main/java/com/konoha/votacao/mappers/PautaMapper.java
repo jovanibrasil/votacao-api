@@ -11,7 +11,20 @@ import com.konoha.votacao.modelo.Pauta;
 @DecoratedWith(PautaMapperDecorator.class)
 public interface PautaMapper {
 	
+	/**
+	 * Faz a conversão de um objeto PautaForm para um objeto Pauta.
+	 * 
+	 * @param pautaForm
+	 * @return
+	 */
 	Pauta pautaFormToPauta(PautaForm pautaForm);
-	PautaDTO pautaToPautaDto(Pauta pauta);
+	
+	/**
+	 * Faz a conversão de um objeto Pauta para um objeto PautaDto.
+	 * 
+	 * @param pauta
+	 * @return
+	 */
+	PautaDTO pautaToPautaDto(Pauta pauta, Long assembleiaId);
 
 }
