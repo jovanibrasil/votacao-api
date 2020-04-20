@@ -35,7 +35,7 @@ public class Pauta implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "cod_pauta")
 	@EqualsAndHashCode.Include
-	private Long codPauta;
+	private Long id;
 
 	@Column(name = "titulo", nullable = false)
 	private String titulo;

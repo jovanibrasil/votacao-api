@@ -67,7 +67,7 @@ public class ItemPautaControllerTests {
 	private final String DESCRICAO = "Descrição";
 	private final String TITULO = "Título";
 	private final Long PAUTA_ID = 2L;
-	private final long COD_ITEM_PAUTA = 49;
+	private final long ITEM_PAUTA_ID = 49;
 	private final LocalDateTime CREATION_DATE = LocalDateTime.now();
 
 	@Before
@@ -80,13 +80,13 @@ public class ItemPautaControllerTests {
 		itemPauta = new ItemPauta();
 		itemPauta.setDescricao("Descrição");
 		itemPauta.setTitulo("Título");
-		itemPauta.setCodItemPauta(COD_ITEM_PAUTA);
+		itemPauta.setId(ITEM_PAUTA_ID);
 		Pauta pauta = new Pauta();
-		pauta.setCodPauta(PAUTA_ID);
+		pauta.setId(PAUTA_ID);
 		itemPauta.setPauta(pauta);
 
 		itemPautaDto = new ItemPautaDTO();
-		itemPautaDto.setId(COD_ITEM_PAUTA);
+		itemPautaDto.setId(ITEM_PAUTA_ID);
 		itemPautaDto.setTitulo(TITULO);
 		itemPautaDto.setDescricao(DESCRICAO);
 		itemPautaDto.setDataCriacao(CREATION_DATE);
@@ -121,8 +121,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -137,8 +136,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -152,8 +150,7 @@ public class ItemPautaControllerTests {
 		itemPautaForm.setTitulo("abcd");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -168,8 +165,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -192,12 +188,11 @@ public class ItemPautaControllerTests {
 		when(itemPautaService.findById(any())).thenReturn(itemPauta);
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/1"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty())
-				.andExpect(jsonPath("$.data.id", equalTo(COD_ITEM_PAUTA)))
-				.andExpect(jsonPath("$.data.titulo", equalTo(TITULO)))
-				.andExpect(jsonPath("$.data.descricao", equalTo(DESCRICAO)))
-				.andExpect(jsonPath("$.data.dataCriacao", equalTo(formatedDate)));
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$.id", equalTo(ITEM_PAUTA_ID)))
+				.andExpect(jsonPath("$.titulo", equalTo(TITULO)))
+				.andExpect(jsonPath("$.descricao", equalTo(DESCRICAO)))
+				.andExpect(jsonPath("$.dataCriacao", equalTo(formatedDate)));
 	}
 
 	/**
@@ -215,8 +210,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/99")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -232,8 +226,7 @@ public class ItemPautaControllerTests {
 
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -248,8 +241,7 @@ public class ItemPautaControllerTests {
 
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	public static String asJsonString(final Object obj) {

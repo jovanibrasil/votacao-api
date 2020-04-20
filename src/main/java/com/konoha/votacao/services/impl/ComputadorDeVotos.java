@@ -28,8 +28,8 @@ public class ComputadorDeVotos {
 	public List<ResultadoItemPauta> computaVotos(Pauta pauta){
 		return pauta.getListaItemPautas().stream().map(itemPauta -> {
 			// Conta quantos votos favoráveis e quantos contrários um item de pauta possui.
-			ResultadoItemPauta result = new ResultadoItemPauta(itemPauta.getCodItemPauta());
-			List<Voto> votos = votoRepository.findByVotoIdCodItemPauta(itemPauta.getCodItemPauta());
+			ResultadoItemPauta result = new ResultadoItemPauta(itemPauta.getId());
+			List<Voto> votos = votoRepository.findByVotoIdItemPautaId(itemPauta.getId());
 			
 			votos.stream().forEach(voto -> {
 				if(Boolean.TRUE.equals(voto.getVoto())) {

@@ -9,7 +9,7 @@ import com.konoha.votacao.modelo.Voto;
 
 public interface VotoRepository extends JpaRepository<Voto, Long> {
 
-	Optional<Voto> findByVotoIdCodItemPautaAndVotoIdCodUsuario(Long codItemPauta, Long codUsuario);
-	List<Voto> findByVotoIdCodItemPauta(Long codItemPauta);
+	Optional<Voto> findByVotoIdItemPautaIdAndVotoIdUsuarioId(Long itemPautaId, Long usuarioId);
+	List<Voto> findByVotoIdItemPautaId(Long itemPautaId);
 	
 }

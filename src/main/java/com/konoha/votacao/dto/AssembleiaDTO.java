@@ -5,17 +5,17 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.hateoas.RepresentationModel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
  
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
-public class AssembleiaDTO {
+public class AssembleiaDTO extends RepresentationModel<AssembleiaDTO> {
 	
-	private Long codAssembleia;
+	private Long id;
 	@NotBlank
 	@Length(min = 5, max = 50, message = "O título deve ter no máximo 50 caracteres")
 	private String titulo;

@@ -1,8 +1,8 @@
 package com.konoha.votacao.services;
 
-import com.konoha.votacao.dto.Message;
+import com.konoha.votacao.dto.MessageDTO;
 
 public interface AsyncMessageService {
-	void sendMessage(Message message);
-	void receive(Message message);
+	void sendMessage(MessageDTO message);
+	void receive(MessageDTO message);
 }

@@ -146,7 +146,6 @@ public class VotoControllerTest {
 			public VotoDTO answer(InvocationOnMock invocation) throws Throwable {
 				ResultadoItemPauta r = (ResultadoItemPauta) invocation.getArgument(0);
 				VotoDTO voto = new VotoDTO();
-				voto.setItemPautaId(r.getItemPautaId());
 				voto.setVotosContrarios(r.getVotosContrarios());
 				voto.setVotosFavoraveis(r.getVotosFavoraveis());
 				return voto;
@@ -156,8 +155,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/*
@@ -172,8 +170,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/*
@@ -188,8 +185,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	public static String asJsonString(final Object obj) {

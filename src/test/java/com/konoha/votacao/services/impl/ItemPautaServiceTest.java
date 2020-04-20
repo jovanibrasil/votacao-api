@@ -64,7 +64,7 @@ public class ItemPautaServiceTest {
 			public ItemPauta answer(InvocationOnMock invocation) throws Throwable {
 				Object[] args = invocation.getArguments();
 				ItemPauta itemPauta = (ItemPauta) args[0];
-				itemPauta.setCodItemPauta(1L);
+				itemPauta.setId(1L);
 				return itemPauta;
 			}
 		});
@@ -74,7 +74,7 @@ public class ItemPautaServiceTest {
 		Long diferencaDeTempo = ChronoUnit.SECONDS
 				.between(itemPauta.getDataCriacao(), LocalDateTime.now());
 		assertTrue(diferencaDeTempo.doubleValue() >= 0.0);
-		assertNotNull(itemPauta.getCodItemPauta());
+		assertNotNull(itemPauta.getId());
 	}
 	
 	/**
@@ -83,12 +83,12 @@ public class ItemPautaServiceTest {
 	 */
 	@Test
 	public void testBuscaItemPauta() {
-		itemPauta.setCodItemPauta(1L);
+		itemPauta.setId(1L);
 		when(itemPautaRepository.findById(1L))
 			.thenReturn(Optional.of(itemPauta));
 		itemPauta = itemPautaService.findById(1L);
 		assertNotNull(itemPauta);
-		assertEquals(1L, itemPauta.getCodItemPauta().longValue());
+		assertEquals(1L, itemPauta.getId().longValue());
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class ItemPautaServiceTest {
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		List<ItemPauta> itens = Arrays.asList(itemPauta, itemPauta);
 		// TODO implementar a verificação de pauta no ItemPautaService
-		when(itemPautaRepository.findByPautaCodPauta(1L, 
+		when(itemPautaRepository.findByPautaId(1L, 
 				pageRequest)).thenReturn(new PageImpl<>(itens));
 		Page<ItemPauta> page = itemPautaService.findByPautaId(1L, pageRequest);
 		assertEquals(2, page.getContent().size());

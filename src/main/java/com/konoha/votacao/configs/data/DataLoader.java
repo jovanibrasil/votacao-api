@@ -47,7 +47,8 @@ public class DataLoader implements CommandLineRunner {
 		usuario = usuarioRepository.save(usuario);
 		
 		assembleia = new Assembleia();
-		assembleia.setTitulo("Título");
+		assembleia.setTitulo("Assembleia 0");
+		assembleia.setDescricao("Descrição Assembleia 0");
 		assembleia = assembleiaRepository.save(assembleia);
 		
 		Sessao sessao = new Sessao();
@@ -56,14 +57,40 @@ public class DataLoader implements CommandLineRunner {
 		
 		
 		pauta = new Pauta();
-		pauta.setTitulo("Titulo");
+		pauta.setTitulo("Pauta 0");
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta.setAssembleia(assembleia);
 		pauta.setSessao(sessao);
 		pauta = pautaRepository.save(pauta);
 		
 		itemPauta = new ItemPauta();
-		itemPauta.setTitulo("Titulo");
+		itemPauta.setTitulo("Item de Pauta 0");
+		itemPauta.setDataCriacao(LocalDateTime.now());
+		itemPauta.setPauta(pauta);
+		itemPauta = itemPautaRepository.save(itemPauta);
+		
+		voto = new Voto(usuario, itemPauta, true);
+		voto = votoRepository.save(voto);
+		
+		assembleia = new Assembleia();
+		assembleia.setTitulo("Assembleia 1");
+		assembleia.setDescricao("Descrição Assembleia 1");
+		assembleia = assembleiaRepository.save(assembleia);
+		
+		sessao = new Sessao();
+		sessao.setDuracaoSessao(1L);
+		sessao.setInicioSessao(LocalDateTime.now().minusHours(2L));
+		
+		
+		pauta = new Pauta();
+		pauta.setTitulo("Pauta 0 Assb 1");
+		pauta.setDataCriacao(LocalDateTime.now());
+		pauta.setAssembleia(assembleia);
+		pauta.setSessao(sessao);
+		pauta = pautaRepository.save(pauta);
+		
+		itemPauta = new ItemPauta();
+		itemPauta.setTitulo("Item de Pauta 0 Assb 1");
 		itemPauta.setDataCriacao(LocalDateTime.now());
 		itemPauta.setPauta(pauta);
 		itemPauta = itemPautaRepository.save(itemPauta);

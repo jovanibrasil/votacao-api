@@ -20,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.mappers.AssembleiaMapper;
 import com.konoha.votacao.modelo.Assembleia;
-import com.konoha.votacao.response.Response;
 import com.konoha.votacao.services.AssembleiaService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public class AssembleiaController {
 	public ResponseEntity<?> create(@Valid @RequestBody AssembleiaDTO assembleiaDto) {
 		Assembleia assembleia = assembleiaService.save(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDto));
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/assembleias/{assembleiaId}")
-				.buildAndExpand(assembleia.getCodAssembleia()).toUri();
+				.buildAndExpand(assembleia.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
@@ -49,10 +48,10 @@ public class AssembleiaController {
 	 * @return
 	 */
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Response<AssembleiaDTO>> detalhar(@PathVariable Long id) {
+	public ResponseEntity<AssembleiaDTO> detalhar(@PathVariable Long id) {
 		Assembleia assembleia = assembleiaService.findById(id);
 		AssembleiaDTO assembleiaDTO = assembleiaMapper.assembleiaToAssembleiaDto(assembleia);
-		return ResponseEntity.ok(new Response<AssembleiaDTO>(assembleiaDTO));
+		return ResponseEntity.ok(assembleiaDTO);
 	}
 	/**
 	 * Busca uma uma lista de assembleia.
@@ -65,7 +64,7 @@ public class AssembleiaController {
 
 		Page<Assembleia> assembleiaPage = assembleiaService.findAll(pageable);
 		Page<AssembleiaDTO> assembleiaDtoPage = assembleiaPage.map(i -> assembleiaMapper.assembleiaToAssembleiaDto(i));
-		return ResponseEntity.ok(new Response<Page<AssembleiaDTO>>(assembleiaDtoPage));
+		return ResponseEntity.ok(assembleiaDtoPage);
 	}
 
 	/**

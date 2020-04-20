@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -67,10 +68,11 @@ public class PautaControllerTest {
 		pautaForm.setTitulo(TITULO);
 		
 		pauta = new Pauta();
-		pauta.setCodPauta(PAUTA_ID);		
+		pauta.setId(PAUTA_ID);		
 	
 		pautaDto = new PautaDTO();
-		pautaDto.setCodPauta(pauta.getCodPauta());
+		pautaDto.setId(pauta.getId());
+		pautaDto.add(new Link("/"));
 	}
 	
 	/**
@@ -106,8 +108,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -124,8 +125,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -145,8 +145,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -162,8 +161,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -174,9 +172,9 @@ public class PautaControllerTest {
 	@Test
 	public void testBuscaPautaPorId() throws Exception {
 		when(pautaService.findById(1L)).thenReturn(pauta);
-		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
-		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/" + ASSEMBLEIA_ID + "/pautas/1")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty())
@@ -195,8 +193,7 @@ public class PautaControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -207,8 +204,8 @@ public class PautaControllerTest {
 	@Test
 	public void testBuscaPautasPorAssembleia() throws Exception {
 		Page<Pauta> pautas = new PageImpl<>(Arrays.asList(pauta, pauta, pauta));
-		when(pautaService.findByAssembleiaCodAssembleia(any(), any())).thenReturn(pautas);
-		when(pautaMapper.pautaToPautaDto(pauta)).thenReturn(pautaDto);
+		when(pautaService.findByAssembleiaId(any(), any())).thenReturn(pautas);
+		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
 				.contentType(MediaType.APPLICATION_JSON))		
@@ -223,14 +220,13 @@ public class PautaControllerTest {
 	 */
 	@Test
 	public void testBuscaPautaPorAssembleiaNaoExistente() throws Exception {
-		when(pautaService.findByAssembleiaCodAssembleia(any(), any()))
+		when(pautaService.findByAssembleiaId(any(), any()))
 			.thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.errors").isNotEmpty())
-				.andExpect(jsonPath("$.data").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -240,7 +236,7 @@ public class PautaControllerTest {
 	 */
 	@Test
 	public void testDeletarPautaComSessaoExistente() throws Exception {
-		doNothing().when(pautaService).deleteById(pauta.getCodPauta());		
+		doNothing().when(pautaService).deleteById(pauta.getId());		
 		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/1"))						
 				.andExpect(status().isNoContent());
 	}

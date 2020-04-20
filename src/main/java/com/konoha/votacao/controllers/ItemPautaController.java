@@ -19,7 +19,6 @@ import com.konoha.votacao.controllers.forms.ItemPautaForm;
 import com.konoha.votacao.dto.ItemPautaDTO;
 import com.konoha.votacao.mappers.ItemPautaMapper;
 import com.konoha.votacao.modelo.ItemPauta;
-import com.konoha.votacao.response.Response;
 import com.konoha.votacao.services.ItemPautaService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,7 +48,7 @@ public class ItemPautaController {
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.path("/{itemPautaId}")
-				.buildAndExpand(itemPauta.getCodItemPauta())
+				.buildAndExpand(itemPauta.getId())
 				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
@@ -68,7 +67,7 @@ public class ItemPautaController {
 		ItemPauta itemPauta = itemPautaService.findById(itemPautaId);
 		ItemPautaDTO itemPautaForm = itemPautaMapper.itemPautaToItemPautaDTO(itemPauta);
 		
-		return ResponseEntity.ok(new Response<ItemPautaDTO>(itemPautaForm));
+		return ResponseEntity.ok(itemPautaForm);
 	}
 	
 	/**
@@ -84,7 +83,7 @@ public class ItemPautaController {
 			
 		Page<ItemPauta> itemPautaPage = itemPautaService.findByPautaId(pautaId, pageable);
 		Page<ItemPautaDTO> itemPautaDtoPage = itemPautaPage.map(i -> itemPautaMapper.itemPautaToItemPautaDTO(i));		
-		return ResponseEntity.ok(new Response<Page<ItemPautaDTO>>(itemPautaDtoPage));
+		return ResponseEntity.ok(itemPautaDtoPage);
 	}
 	
 	

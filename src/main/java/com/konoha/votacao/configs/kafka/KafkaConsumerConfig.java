@@ -16,7 +16,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.konoha.votacao.dto.Message;
+import com.konoha.votacao.dto.MessageDTO;
 
 
 @Configuration
@@ -33,7 +33,7 @@ public class KafkaConsumerConfig {
 	 * @return
 	 */
 	@Bean
-	public ConsumerFactory<String, Message> consumerFactory() {
+	public ConsumerFactory<String, MessageDTO> consumerFactory() {
 		Map<String, Object> configProps = new HashMap<>();
 		configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
 		configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -43,12 +43,12 @@ public class KafkaConsumerConfig {
 		return new DefaultKafkaConsumerFactory<>(
 				configProps, 
 				new StringDeserializer(),
-				new JsonDeserializer<>(Message.class));
+				new JsonDeserializer<>(MessageDTO.class));
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, MessageDTO> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, MessageDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}

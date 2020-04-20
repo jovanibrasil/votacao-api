@@ -73,7 +73,7 @@ public class ItemPautaRepositoryTest {
 		itemPauta = itemPautaRepository.save(itemPauta);
 		assertEquals(DESCRICAO, itemPauta.getDescricao());
 		assertEquals(TITULO, itemPauta.getTitulo());
-		assertNotNull(itemPauta.getCodItemPauta());
+		assertNotNull(itemPauta.getId());
 	}
 	
 	/**
@@ -105,10 +105,10 @@ public class ItemPautaRepositoryTest {
 	public void testSaveItensPautaValida() {
 		itemPautaRepository.save(itemPauta);
 		entityManager.detach(itemPauta);
-		itemPauta.setCodItemPauta(null);
+		itemPauta.setId(null);
 		itemPautaRepository.save(itemPauta);
 		entityManager.detach(itemPauta);
-		itemPauta.setCodItemPauta(null);
+		itemPauta.setId(null);
 		itemPautaRepository.save(itemPauta);
 		assertEquals(3, itemPautaRepository.findAll().size());
 	}
@@ -124,12 +124,12 @@ public class ItemPautaRepositoryTest {
 		
 		itemPauta = itemPautaRepository.save(itemPauta); // save
 		itemPauta.setDescricao(novaDescricao);
-		Long id = itemPauta.getCodItemPauta();
+		Long id = itemPauta.getId();
 		itemPauta = itemPautaRepository.save(itemPauta); // update
 		
 		assertEquals(novaDescricao, itemPauta.getDescricao());
 		assertEquals(TITULO, itemPauta.getTitulo());
-		assertEquals(id, itemPauta.getCodItemPauta());
+		assertEquals(id, itemPauta.getId());
 	}
 
 	/**
@@ -144,12 +144,12 @@ public class ItemPautaRepositoryTest {
 
 		itemPauta = itemPautaRepository.save(itemPauta); // save
 		itemPauta.setTitulo(novoTitulo); 
-		Long id = itemPauta.getCodItemPauta();
+		Long id = itemPauta.getId();
 		itemPauta = itemPautaRepository.save(itemPauta); // update
 
 		assertEquals(novoTitulo, itemPauta.getTitulo());
 		assertEquals(DESCRICAO, itemPauta.getDescricao());
-		assertEquals(id, itemPauta.getCodItemPauta());
+		assertEquals(id, itemPauta.getId());
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class ItemPautaRepositoryTest {
 	@Test
 	public void testFindItemPautaPorId() {
 		itemPauta = itemPautaRepository.save(itemPauta);
-		Optional<ItemPauta> optSavedItem = itemPautaRepository.findById(itemPauta.getCodItemPauta());
+		Optional<ItemPauta> optSavedItem = itemPautaRepository.findById(itemPauta.getId());
 		assertTrue(optSavedItem.isPresent());
 	}
 	
@@ -180,8 +180,8 @@ public class ItemPautaRepositoryTest {
 	@Test
 	public void testDeleteItemExistentePautaPorId() {
 		itemPauta = itemPautaRepository.save(itemPauta);
-		itemPautaRepository.deleteById(itemPauta.getCodItemPauta());
-		assertFalse(itemPautaRepository.findById(itemPauta.getCodItemPauta()).isPresent());
+		itemPautaRepository.deleteById(itemPauta.getId());
+		assertFalse(itemPautaRepository.findById(itemPauta.getId()).isPresent());
 		assertEquals(0, itemPautaRepository.findAll().size());
 	}
 		
@@ -193,11 +193,11 @@ public class ItemPautaRepositoryTest {
 	public void testListItensPautaPorPauta() {
 		itemPauta = itemPautaRepository.save(itemPauta);
 		entityManager.detach(itemPauta);
-		itemPauta.setCodItemPauta(null);
+		itemPauta.setId(null);
 		itemPauta = itemPautaRepository.save(itemPauta);
 		PageRequest pageRequest = PageRequest.of(0, 5);
 		assertEquals(2, itemPautaRepository
-				.findByPautaCodPauta(pauta.getCodPauta(), pageRequest).getContent().size());
+				.findByPautaId(pauta.getId(), pageRequest).getContent().size());
 	}
 	
 }

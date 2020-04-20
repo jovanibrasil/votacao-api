@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.konoha.votacao.response.Response;
-
 @RestControllerAdvice
 public class RestExceptionHandler {
 
@@ -26,33 +24,26 @@ public class RestExceptionHandler {
 	
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public Response<List<ErroDeFormularioForm>> handle(MethodArgumentNotValidException exception) {
+	public List<ErroDeFormularioForm> handle(MethodArgumentNotValidException exception) {
 		Locale locale = LocaleContextHolder.getLocale();
-		List<ErroDeFormularioForm> erros = exception.getBindingResult()
+		return exception.getBindingResult()
 			.getFieldErrors()
 			.stream()
 			.map(e -> 
 				new ErroDeFormularioForm(e.getField(), messageSource.getMessage(e, locale))
 			).collect(Collectors.toList());
-		Response<List<ErroDeFormularioForm>> response = new Response<>();
-		response.setErrors(erros);
-		return response;
 	}
 	
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
 	@ExceptionHandler(NotFoundException.class)
-	public Response<List<String>> handle(NotFoundException exception) {
-		Response<List<String>> response = new Response<>();
-		response.setErrors(Arrays.asList(exception.getMessage()));
-		return response;
+	public List<String> handle(NotFoundException exception) {
+		return Arrays.asList(exception.getMessage());
 	}
 	
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(VotoException.class)
-	public Response<List<String>> handle(VotoException exception) {
-		Response<List<String>> response = new Response<>();
-		response.setErrors(Arrays.asList(exception.getMessage()));
-		return response;
+	public List<String> handle(VotoException exception) {
+		return Arrays.asList(exception.getMessage());
 	}
 	
 }

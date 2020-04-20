@@ -92,18 +92,18 @@ public class VotoRepositoryTest {
 	public void testSalvaVoto() {
 		votoRepository.save(voto);
 		Optional<Voto> optVoto = votoRepository
-				.findByVotoIdCodItemPautaAndVotoIdCodUsuario(itemPauta.getCodItemPauta(), usuario.getCodUsuario());
+				.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPauta.getId(), usuario.getId());
 		assertTrue(optVoto.isPresent());
 		assertTrue(optVoto.get().getVoto());
-		assertEquals(usuario.getCodUsuario(), optVoto.get().getVotoId().getCodUsuario());
-		assertEquals(itemPauta.getCodItemPauta(), optVoto.get().getVotoId().getCodItemPauta());
+		assertEquals(usuario.getId(), optVoto.get().getVotoId().getUsuarioId());
+		assertEquals(itemPauta.getId(), optVoto.get().getVotoId().getItemPautaId());
 	}
 	
 	
 	@Test(expected = PersistenceException.class)
 	public void testSalvaVotoCodItemPautaInvalido() {
 		entityManager.detach(itemPauta);
-		itemPauta.setCodItemPauta(null);
+		itemPauta.setId(null);
 		voto = new Voto(usuario, itemPauta, true);
 		voto = votoRepository.save(voto);
 		entityManager.flush();
@@ -113,7 +113,7 @@ public class VotoRepositoryTest {
 	@Test(expected = PersistenceException.class)
 	public void testSalvaVotoCodUsuarioInvalido() {
 		entityManager.detach(usuario);
-		usuario.setCodUsuario(null);
+		usuario.setId(null);
 		voto = new Voto(usuario, itemPauta, true);
 		votoRepository.save(voto);
 		entityManager.flush();
@@ -122,7 +122,7 @@ public class VotoRepositoryTest {
 	@Test
 	public void testBuscaVotoCodUsuarioInvalido() {
 		Optional<Voto> optVoto = votoRepository
-				.findByVotoIdCodItemPautaAndVotoIdCodUsuario(itemPauta.getCodItemPauta(), -1L);
+				.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPauta.getId(), -1L);
 		assertFalse(optVoto.isPresent());
 	}
 
@@ -130,7 +130,7 @@ public class VotoRepositoryTest {
 	public void testSalvaVotosUsuariosDiferentes() {
 		votoRepository.save(voto);
 		entityManager.detach(usuario);
-		usuario.setCodUsuario(null);
+		usuario.setId(null);
 		usuario = usuarioRepository.save(usuario);
 		
 		voto = new Voto(usuario, itemPauta, false);
@@ -147,7 +147,7 @@ public class VotoRepositoryTest {
 		votoRepository.save(voto); // faz update para false
 		
 		Voto primeiroVotoSalvo = votoRepository
-				.findByVotoIdCodItemPautaAndVotoIdCodUsuario(itemPauta.getCodItemPauta(), usuario.getCodUsuario()).get();
+				.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPauta.getId(), usuario.getId()).get();
  		
 		assertEquals(primeiroVoto.getVoto(), primeiroVotoSalvo.getVoto());
 	}
@@ -155,7 +155,7 @@ public class VotoRepositoryTest {
 	@Test
 	public void testBuscaVotoCodItemPautaInvalido() {
 		Optional<Voto> optVoto = votoRepository
-				.findByVotoIdCodItemPautaAndVotoIdCodUsuario(-1L, usuario.getCodUsuario());
+				.findByVotoIdItemPautaIdAndVotoIdUsuarioId(-1L, usuario.getId());
 		assertFalse(optVoto.isPresent());
 	}
 	

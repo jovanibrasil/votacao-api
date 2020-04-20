@@ -45,17 +45,17 @@ public class ComputadorDeVotosTest {
         this.computadorDeVotos = new ComputadorDeVotos(votoRepository);
         
         usuario = new Usuario();
-		usuario.setCodUsuario(1L);
+		usuario.setId(1L);
 		usuario.setCpf("00000000000");
 		usuario.setNomeUsuario("nomeUsuario");
 		usuario.setSenha("123456");
 		
 		assembleia = new Assembleia();
 		assembleia.setTitulo("Título");
-		assembleia.setCodAssembleia(1L);
+		assembleia.setId(1L);
 		
 		pauta = new Pauta();
-		pauta.setCodPauta(1L);
+		pauta.setId(1L);
 		pauta.setTitulo("Titulo");
 		pauta.setDataCriacao(LocalDateTime.now());
 		pauta.setAssembleia(assembleia);
@@ -65,7 +65,7 @@ public class ComputadorDeVotosTest {
 		pauta.setSessao(sessao);
 		
 		itemPauta1 = new ItemPauta();
-		itemPauta1.setCodItemPauta(1L);
+		itemPauta1.setId(1L);
 		itemPauta1.setTitulo("Titulo");
 		itemPauta1.setDataCriacao(LocalDateTime.now());
 		itemPauta1.setPauta(pauta);
@@ -83,7 +83,7 @@ public class ComputadorDeVotosTest {
 		List<Voto> votos = Arrays.asList(voto);
 		pauta.setListaItemPautas(Arrays.asList(itemPauta1));
 		
-		when(votoRepository.findByVotoIdCodItemPauta(any())).thenReturn(votos);
+		when(votoRepository.findByVotoIdItemPautaId(any())).thenReturn(votos);
 		
 		List<ResultadoItemPauta> resultado = computadorDeVotos.computaVotos(pauta);
 		ResultadoItemPauta rip = resultado.get(0);
@@ -104,7 +104,7 @@ public class ComputadorDeVotosTest {
 		List<Voto> votos = Arrays.asList(voto, new Voto(new Usuario(), itemPauta1, false));
 		
 		pauta.setListaItemPautas(Arrays.asList(itemPauta1));
-		when(votoRepository.findByVotoIdCodItemPauta(any())).thenReturn(votos);
+		when(votoRepository.findByVotoIdItemPautaId(any())).thenReturn(votos);
 		
 		List<ResultadoItemPauta> resultado = computadorDeVotos.computaVotos(pauta);
 		ResultadoItemPauta rip = resultado.get(0);
@@ -123,16 +123,16 @@ public class ComputadorDeVotosTest {
 	public void testComputaVotosPautaComDoisTestes() {
 		
 		ItemPauta itemPauta2 = new ItemPauta();
-		itemPauta2.setCodItemPauta(2L);
+		itemPauta2.setId(2L);
 		itemPauta2.setPauta(pauta);
 		voto = new Voto(usuario, itemPauta2, true);
 		
 		pauta.setListaItemPautas(Arrays.asList(itemPauta1, itemPauta2));
 		
-		when(votoRepository.findByVotoIdCodItemPauta(itemPauta1.getCodItemPauta()))
+		when(votoRepository.findByVotoIdItemPautaId(itemPauta1.getId()))
 			.thenReturn(Arrays.asList(voto));
 		
-		when(votoRepository.findByVotoIdCodItemPauta(itemPauta2.getCodItemPauta()))
+		when(votoRepository.findByVotoIdItemPautaId(itemPauta2.getId()))
 			.thenReturn(Arrays.asList(voto));
 		
 		List<ResultadoItemPauta> resultado = computadorDeVotos.computaVotos(pauta);

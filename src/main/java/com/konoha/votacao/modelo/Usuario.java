@@ -26,7 +26,7 @@ public class Usuario implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
   @Column(name = "cod_usuario", nullable = false)
-  private Long codUsuario;
+  private Long id;
 
   @EqualsAndHashCode.Include
   @Column(name = "cpf", nullable = false)

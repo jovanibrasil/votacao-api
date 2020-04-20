@@ -33,7 +33,7 @@ public class ItemPautaServiceImpl implements ItemPautaService {
 	@Override
 	public Page<ItemPauta> findByPautaId(Long pautaId, Pageable pageable) {
 		pautaService.findById(pautaId); // Lança exception caso não exista a pauta
-		return itemPautaRepository.findByPautaCodPauta(pautaId, pageable);
+		return itemPautaRepository.findByPautaId(pautaId, pageable);
 	}
 
 	@Override
