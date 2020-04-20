@@ -127,7 +127,7 @@ public class AssembleiaControllerTest {
 
 		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class AssembleiaControllerTest {
 
 		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaToAssembleiaDto(any())).thenReturn(assembleiaDTO);
 
 		mvc.perform(MockMvcRequestBuilders.get(URL + "/1")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.id", is(1L)));
+				.andExpect(jsonPath("$.id", is(1L)));
 
 		verify(assembleiaService, times(1)).findById(ASSEMBLEIA_ID);
 	}
@@ -180,8 +180,8 @@ public class AssembleiaControllerTest {
 		when(assembleiaService.findById(any())).thenThrow(NotFoundException.class);
 
 		mvc.perform(MockMvcRequestBuilders.get(URL + "/99").contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound()).andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**

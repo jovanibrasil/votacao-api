@@ -108,8 +108,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -126,8 +125,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -147,8 +145,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -164,8 +161,7 @@ public class PautaControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -197,8 +193,7 @@ public class PautaControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**
@@ -231,8 +226,7 @@ public class PautaControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
 				.contentType(MediaType.APPLICATION_JSON))		
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.errors").isNotEmpty())
-				.andExpect(jsonPath("$.data").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/**

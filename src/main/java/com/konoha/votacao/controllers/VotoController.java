@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.konoha.votacao.controllers.forms.VotoForm;
 import com.konoha.votacao.dto.VotoDTO;
 import com.konoha.votacao.mappers.VotoMapper;
-import com.konoha.votacao.response.Response;
 import com.konoha.votacao.services.VotoService;
 
 import lombok.RequiredArgsConstructor;
@@ -51,13 +50,13 @@ public class VotoController {
 	 * @return
 	 */
 	@GetMapping("/{pautaId}")
-	public ResponseEntity<Response<List<VotoDTO>>> buscaVotosDeUmaPauta(@PathVariable Long pautaId){
+	public ResponseEntity<List<VotoDTO>> buscaVotosDeUmaPauta(@PathVariable Long pautaId){
 		
 		List<VotoDTO> resultados = votoService.findResultadoVotacaoByPautaId(pautaId).stream()
 				.map(votoMapper::resultadoItemPautaToVotoDto)
 				.collect(Collectors.toList());
 		
-		return ResponseEntity.ok().body(new Response<List<VotoDTO>>(resultados));
+		return ResponseEntity.ok().body(resultados);
 	}
 	
 }

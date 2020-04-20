@@ -121,8 +121,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -137,8 +136,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -152,8 +150,7 @@ public class ItemPautaControllerTests {
 		itemPautaForm.setTitulo("abcd");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -168,8 +165,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
 				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -192,12 +188,11 @@ public class ItemPautaControllerTests {
 		when(itemPautaService.findById(any())).thenReturn(itemPauta);
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/1"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty())
-				.andExpect(jsonPath("$.data.id", equalTo(ITEM_PAUTA_ID)))
-				.andExpect(jsonPath("$.data.titulo", equalTo(TITULO)))
-				.andExpect(jsonPath("$.data.descricao", equalTo(DESCRICAO)))
-				.andExpect(jsonPath("$.data.dataCriacao", equalTo(formatedDate)));
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$.id", equalTo(ITEM_PAUTA_ID)))
+				.andExpect(jsonPath("$.titulo", equalTo(TITULO)))
+				.andExpect(jsonPath("$.descricao", equalTo(DESCRICAO)))
+				.andExpect(jsonPath("$.dataCriacao", equalTo(formatedDate)));
 	}
 
 	/**
@@ -215,8 +210,7 @@ public class ItemPautaControllerTests {
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/99")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -232,8 +226,7 @@ public class ItemPautaControllerTests {
 
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	/**
@@ -248,8 +241,7 @@ public class ItemPautaControllerTests {
 
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
 	public static String asJsonString(final Object obj) {

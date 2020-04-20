@@ -156,8 +156,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data").isNotEmpty())
-				.andExpect(jsonPath("$.errors").isEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/*
@@ -172,8 +171,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	/*
@@ -188,8 +186,7 @@ public class VotoControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.data").isEmpty())
-				.andExpect(jsonPath("$.errors").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty());
 	}
 	
 	public static String asJsonString(final Object obj) {
