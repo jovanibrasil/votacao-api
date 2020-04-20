@@ -146,7 +146,6 @@ public class VotoControllerTest {
 			public VotoDTO answer(InvocationOnMock invocation) throws Throwable {
 				ResultadoItemPauta r = (ResultadoItemPauta) invocation.getArgument(0);
 				VotoDTO voto = new VotoDTO();
-				voto.setItemPautaId(r.getItemPautaId());
 				voto.setVotosContrarios(r.getVotosContrarios());
 				voto.setVotosFavoraveis(r.getVotosFavoraveis());
 				return voto;

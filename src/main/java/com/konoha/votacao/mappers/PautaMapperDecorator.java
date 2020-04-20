@@ -15,9 +15,6 @@ import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.modelo.Sessao;
 import com.konoha.votacao.services.AssembleiaService;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public abstract class PautaMapperDecorator implements PautaMapper {
 
 	private PautaMapper pautaMapper;
