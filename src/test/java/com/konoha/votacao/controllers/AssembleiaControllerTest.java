@@ -39,6 +39,7 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.konoha.votacao.controllers.forms.AtualizarAssembleiaForm;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.mappers.AssembleiaMapper;
@@ -64,6 +65,8 @@ public class AssembleiaControllerTest {
 	private AssembleiaDTO assembleiaDTO;
 
 	private Assembleia assembleia;
+	
+	private AtualizarAssembleiaForm atualizarAssembleiaForm;
 
 	@MockBean
 	AssembleiaService assembleiaService;
@@ -91,12 +94,16 @@ public class AssembleiaControllerTest {
 		assembleiaRepository.save(assembleia);
 
 		assembleiaDTO = new AssembleiaDTO();
-
 		assembleiaDTO.setCodAssembleia(COD_ASSEMBLEIA);
 		assembleiaDTO.setTitulo(TITULO);
 		assembleiaDTO.setDescricao(DESCRICAO);
 		assembleiaDTO.setDataAssembleia(DATA_ASSEMBLEIA);
 		assembleiaDTO.setDataCriacao(DATA_CRIACAO);
+		
+		atualizarAssembleiaForm = new AtualizarAssembleiaForm();		
+		atualizarAssembleiaForm.setTitulo("update teste unitário");
+		atualizarAssembleiaForm.setDescricao("update teste unitário");
+		atualizarAssembleiaForm.setDataAssembleia(DATA_ASSEMBLEIA);
 
 	}
 
@@ -109,8 +116,11 @@ public class AssembleiaControllerTest {
 	public void testSave() throws Exception {
 		when(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDTO)).thenReturn(assembleia);
 		when(assembleiaService.save(any())).thenReturn(assembleia);
-		mvc.perform(MockMvcRequestBuilders.post(URL).content(asJsonString(assembleia))
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+		
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(assembleia))
+				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated());
 
 	}
@@ -125,9 +135,12 @@ public class AssembleiaControllerTest {
 	public void testPostAssembeliaTituloNull() throws Exception {
 		assembleiaDTO.setTitulo(null);
 
-		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(assembleiaDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.data")
+				.isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 
 	/**
@@ -140,9 +153,12 @@ public class AssembleiaControllerTest {
 	public void testPostAssembeliaTituloVazio() throws Exception {
 		assembleiaDTO.setTitulo("              ");
 
-		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.data").isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(assembleiaDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.data")
+				.isEmpty()).andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 
 	/**
@@ -161,7 +177,8 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaDtoToAssembleia(any())).thenReturn(assembleia);
 		when(assembleiaMapper.assembleiaToAssembleiaDto(any())).thenReturn(assembleiaDTO);
 
-		mvc.perform(MockMvcRequestBuilders.get(URL + "/1")).andExpect(status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get(URL + "/1"))
+				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.codAssembleia", is(1L)));
 
 		verify(assembleiaService, times(1)).findById(COD_ASSEMBLEIA);
@@ -179,8 +196,10 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaToAssembleiaDto(assembleia)).thenReturn(assembleiaDTO);
 		when(assembleiaService.findById(any())).thenThrow(NotFoundException.class);
 
-		mvc.perform(MockMvcRequestBuilders.get(URL + "/99").contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound()).andExpect(jsonPath("$.data").isEmpty())
+		mvc.perform(MockMvcRequestBuilders.get(URL + "/99")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.data").isEmpty())
 				.andExpect(jsonPath("$.errors").isNotEmpty());
 	}
 
@@ -207,8 +226,8 @@ public class AssembleiaControllerTest {
 	@Test
 	public void testDeletarAssembleia() throws Exception {
 		doNothing().when(assembleiaService).deleteById(COD_ASSEMBLEIA);		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + COD_ASSEMBLEIA))						
-			.andExpect(status().isNoContent());
+		mvc.perform(MockMvcRequestBuilders.delete(URL +"/"+ COD_ASSEMBLEIA))					
+										  .andExpect(status().isNoContent());
 	}
 	
 	/**
@@ -219,9 +238,33 @@ public class AssembleiaControllerTest {
 	@Test
 	public void testDeletarAssembleiaIdInvalido() throws Exception {
 		doThrow(NotFoundException.class).when(assembleiaService).deleteById(Long.parseLong("0000"));		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + "0000"))						
-			.andExpect(status().isNotFound());
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + "0000"))
+										  .andExpect(status().isNotFound());
 	}
+	
+	/**
+	 * Testa a operação de alterar uma assembleia
+	 * 
+	 * @throws Exception
+	 */
+	
+	@Test
+	public void testAleterarAssembleia() throws Exception {
+	  
+	  when(assembleiaMapper.atualizarAssembleiaFormToAssembleia(any()))
+	     .thenReturn(assembleia);
+	   
+	  when(assembleiaService.atualizar(assembleia)).thenReturn(assembleia);		
+	  when(assembleiaMapper.assembleiaToAssembleiaDto(assembleia)).thenReturn(assembleiaDTO);
+
+		mvc.perform(MockMvcRequestBuilders.patch("/assembleias/1")
+		    .accept(MediaType.APPLICATION_JSON)
+				.content(asJsonString(atualizarAssembleiaForm))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+				
+	}
+
 
 	public static String asJsonString(final Object obj) {
 		try {
@@ -256,12 +299,6 @@ public class AssembleiaControllerTest {
 				return EnumSet.noneOf(Option.class);
 			}
 		});
-	}
-
-
-	
-	
-	
-	
+	}	
 	
 }

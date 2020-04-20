@@ -20,6 +20,11 @@ import com.konoha.votacao.repository.VotoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Classe responsavel pelo carregamento de dados 
+ * no banco, para fins de teste no perfil de desenvolvimento. 
+ *
+ */
 @RequiredArgsConstructor
 @Profile("dev")
 @Component
@@ -48,6 +53,7 @@ public class DataLoader implements CommandLineRunner {
 		
 		assembleia = new Assembleia();
 		assembleia.setTitulo("Título");
+		assembleia.setDataCriacao(LocalDateTime.now().minusHours(2L));
 		assembleia = assembleiaRepository.save(assembleia);
 		
 		Sessao sessao = new Sessao();

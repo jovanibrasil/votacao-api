@@ -1,8 +1,11 @@
 package com.konoha.votacao.repository;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -16,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +60,7 @@ public class AssembleiaRepositoryTest {
 	 * 
 	 */
 	@Test
-	public void testSavePautaValida() {
+	public void testSaveAssembleiaValida() {
 		assembleia = assembleiaRepository.save(assembleia);
 		assertNotNull(assembleia.getCodAssembleia());
 	}
@@ -66,7 +70,7 @@ public class AssembleiaRepositoryTest {
 	 * 
 	 */
 	@Test
-	public void testDeletePautaValida() {
+	public void testDeleteAssembleiaValida() {		
 		assembleia = assembleiaRepository.save(assembleia);
 		assembleiaRepository.delete(assembleia);
 		assertFalse(assembleiaRepository.findById(assembleia.getCodAssembleia()).isPresent());
@@ -76,20 +80,48 @@ public class AssembleiaRepositoryTest {
 	 * Testa busca assembleia por ID
 	 */
 	@Test
-	public void testFindAssembleiaPorId() {
+	public void testFindAssembleiaPorId() {		
 		assembleia = assembleiaRepository.save(assembleia);
 		Optional<Assembleia> response = assembleiaRepository.findById(assembleia.getCodAssembleia());
 		assertTrue(response.isPresent());
 	}
-
+	
+	/**
+	 * Testa uma bucar todas assemlbeias por pagina
+	 * 
+	 */
 	@Test
-	public void testPagina() {
+	public void testPagina() {		
 		assembleia = assembleiaRepository.save(assembleia);
-
 		int pageSize = 10;
 		Pageable pageable = PageRequest.of(0, pageSize);
 		Page<Assembleia> assembleias = assembleiaRepository.findAll(pageable);
 		assertEquals(1, assembleias.getContent().size());
 	}
+	
+	/**
+	 * Testa uma atualizao assembleia
+	 * 
+	 */
+	@Test
+	public void testAtualizarAssembleiaValida() {
+		String titulo ="update teste unitário";
+		assembleia = assembleiaRepository.save(assembleia);
+		assembleia.setTitulo(titulo);
+		assembleiaRepository.save(assembleia);
+		assertEquals(titulo, assembleia.getTitulo());
+		assertThat(assembleia.getTitulo(), is(equalTo(titulo)));
 
+	}	
+	
+	/**
+	 * Testa atualização assembleia com título nulo.
+	 * 
+	 */
+	@Test(expected = DataIntegrityViolationException.class)
+	public void testSaveItemPautaSemPauta() {		
+		assembleia.setTitulo(null);
+		assembleiaRepository.save(assembleia);
+		
+	}
 }

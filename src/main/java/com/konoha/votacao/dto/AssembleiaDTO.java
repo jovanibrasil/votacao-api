@@ -6,6 +6,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +24,9 @@ public class AssembleiaDTO {
 	@NotBlank
 	@Length(min = 5, max = 100, message = "A descrição deve ter no máximo 100 caracteres")
 	private String descricao;	
-	private LocalDateTime dataAssembleia;	
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
+	private LocalDateTime dataAssembleia;
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")	
 	private LocalDateTime dataCriacao;
 	
 }

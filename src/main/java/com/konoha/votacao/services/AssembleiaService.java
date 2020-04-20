@@ -14,6 +14,13 @@ public interface AssembleiaService {
 	Page<Assembleia> findAll(Pageable pageable);
 	
 	void deleteById(Long id);
+
+  Assembleia atualizar(Assembleia assembleia);
+
+
+	
+
+  
 	
 	
 

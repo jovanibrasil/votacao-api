@@ -10,4 +10,8 @@ import com.konoha.votacao.modelo.Assembleia;
 @Repository
 public interface AssembleiaRepository extends JpaRepository<Assembleia, Long>{
 	Page<Assembleia> findAll(Pageable pageable);
+
+ 
+	
+	
 }
