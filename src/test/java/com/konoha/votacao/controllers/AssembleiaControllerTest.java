@@ -43,6 +43,7 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.konoha.votacao.configs.security.TokenService;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
+import com.konoha.votacao.forms.AtualizarAssembleiaForm;
 import com.konoha.votacao.mappers.AssembleiaMapper;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.Pauta;
@@ -68,6 +69,7 @@ public class AssembleiaControllerTest {
 
 	private AssembleiaDTO assembleiaDTO;
 	private Assembleia assembleia;
+	private AtualizarAssembleiaForm atualizarAssembleiaForm;
 	
 	private final String AUTH_HEADER = "Authorization";
 	private final String AUTH_HEADER_CONTENT = "Bearer x.x.x.x";
@@ -107,6 +109,11 @@ public class AssembleiaControllerTest {
 		assembleiaDTO.setDescricao(DESCRICAO);
 		assembleiaDTO.setDataAssembleia(DATA_ASSEMBLEIA);
 		assembleiaDTO.setDataCriacao(DATA_CRIACAO);
+		
+		atualizarAssembleiaForm = new AtualizarAssembleiaForm();    
+    atualizarAssembleiaForm.setTitulo("update teste unitário");
+    atualizarAssembleiaForm.setDescricao("update teste unitário");
+    atualizarAssembleiaForm.setDataAssembleia(DATA_ASSEMBLEIA);
 		
 		Usuario usuario = new Usuario();
 		usuario.setCpf("00000000000");
@@ -256,6 +263,31 @@ public class AssembleiaControllerTest {
 			.header(AUTH_HEADER, AUTH_HEADER_CONTENT))						
 			.andExpect(status().isNotFound());
 	}
+	
+	/**
+   * Testa a operação de alterar uma assembleia
+   * 
+   * @throws Exception
+   */
+  
+  @Test
+  public void testAleterarAssembleia() throws Exception {
+    
+    when(assembleiaMapper.atualizarAssembleiaFormToAssembleia(any()))
+       .thenReturn(assembleia);
+     
+    when(assembleiaService.atualizar(assembleia)).thenReturn(assembleia);   
+    when(assembleiaMapper.assembleiaToAssembleiaDto(assembleia)).thenReturn(assembleiaDTO);
+
+    mvc.perform(MockMvcRequestBuilders.patch("/assembleias/1")
+        .header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(asJsonString(atualizarAssembleiaForm))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+        
+  }
+
 
 	public static String asJsonString(final Object obj) {
 		try {

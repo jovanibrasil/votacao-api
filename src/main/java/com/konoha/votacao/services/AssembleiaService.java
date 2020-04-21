@@ -10,6 +10,7 @@ public interface AssembleiaService {
 	Assembleia save(Assembleia assembleia);
 	Assembleia findById(Long id);
 	Page<Assembleia> findAll(Pageable pageable);
-	void deleteById(Long id);	
+	void deleteById(Long id);
+  Assembleia atualizar(Assembleia assembleia);	
 	
 }
