@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 
 import com.konoha.votacao.controllers.ItemPautaController;
-import com.konoha.votacao.controllers.forms.PautaForm;
 import com.konoha.votacao.dto.PautaDTO;
+import com.konoha.votacao.forms.PautaForm;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.modelo.Sessao;

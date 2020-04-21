@@ -101,7 +101,7 @@ public class VotoServiceTest {
 		sessao.setDuracaoSessao(4L);
 		pauta.setSessao(sessao);
 		
-		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
+		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
@@ -120,7 +120,7 @@ public class VotoServiceTest {
 	@Test(expected = VotoException.class)
 	public void testSalvaVotoRepetido() {
 		
-		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
+		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
 				usuario.getId())).thenReturn(Optional.of(voto));
 		votoService.saveVoto(1L, true);
@@ -134,7 +134,7 @@ public class VotoServiceTest {
 	public void testSalvaVotoPautaInvalida() {
 		pauta.getSessao().setDuracaoSessao(0L);
 		
-		when(usuarioService.buscaUsuario(any())).thenReturn(usuario);
+		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,

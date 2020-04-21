@@ -2,7 +2,7 @@ package com.konoha.votacao.mappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.konoha.votacao.controllers.forms.ItemPautaForm;
+import com.konoha.votacao.forms.ItemPautaForm;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.services.PautaService;

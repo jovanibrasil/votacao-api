@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +28,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.konoha.votacao.controllers.forms.VotoForm;
+import com.konoha.votacao.configs.security.TokenService;
 import com.konoha.votacao.dto.VotoDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.exceptions.VotoException;
+import com.konoha.votacao.forms.VotoForm;
 import com.konoha.votacao.mappers.VotoMapper;
+import com.konoha.votacao.modelo.Perfil;
+import com.konoha.votacao.modelo.Usuario;
+import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.VotoService;
 import com.konoha.votacao.services.impl.modelos.ResultadoItemPauta;
 
@@ -47,14 +52,30 @@ public class VotoControllerTest {
 	private VotoService votoService;
 	@MockBean
 	private VotoMapper votoMapper;
+	@MockBean
+	private TokenService tokenService;
+	@MockBean
+	private UsuarioRepository usuarioRepository;
+	
 	
 	private VotoForm votoForm;
+	
+	private final String AUTH_HEADER = "Authorization";
+	private final String AUTH_HEADER_CONTENT = "Bearer x.x.x.x";
 	
 	@Before
 	public void setUp() {
 		votoForm = new VotoForm();
 		votoForm.setVoto(true);
 		votoForm.setItemPautaId(1L);
+		
+		Usuario usuario = new Usuario();
+		usuario.setCpf("00000000000");
+		Perfil perfil = new Perfil();
+		perfil.setName("ROLE_ADMIN");
+		usuario.setPerfis(Arrays.asList(perfil));
+		when(tokenService.isValid(any())).thenReturn(true);
+		when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
 	}
 	
 	/**
@@ -66,6 +87,7 @@ public class VotoControllerTest {
 	public void testSalvaVoto() throws Exception {
 		doNothing().when(votoService).saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)))		
 				.andExpect(status().isCreated());
@@ -79,6 +101,7 @@ public class VotoControllerTest {
 	@Test
 	public void testSalvaVotoNulo() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(null)))		
 				.andExpect(status().isBadRequest());
@@ -93,6 +116,7 @@ public class VotoControllerTest {
 	public void testSalvaVotoItemPautaNulo() throws Exception {
 		votoForm.setItemPautaId(null);
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)))		
 				.andExpect(status().isBadRequest());
@@ -108,6 +132,7 @@ public class VotoControllerTest {
 		doThrow(VotoException.class).when(votoService)
 			.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)))		
 				.andExpect(status().isBadRequest());
@@ -123,6 +148,7 @@ public class VotoControllerTest {
 		doThrow(VotoException.class).when(votoService)
 			.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		mvc.perform(MockMvcRequestBuilders.post("/votos")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(votoForm)));
 	}
@@ -153,6 +179,7 @@ public class VotoControllerTest {
 		});
 		
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -168,6 +195,7 @@ public class VotoControllerTest {
 		when(votoService.findResultadoVotacaoByPautaId(1L)).thenThrow(VotoException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -183,6 +211,7 @@ public class VotoControllerTest {
 		when(votoService.findResultadoVotacaoByPautaId(1L)).thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/votos/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());

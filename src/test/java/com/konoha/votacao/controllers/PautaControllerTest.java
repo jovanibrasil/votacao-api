@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +30,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.konoha.votacao.controllers.forms.PautaForm;
+import com.konoha.votacao.configs.security.TokenService;
 import com.konoha.votacao.dto.PautaDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
+import com.konoha.votacao.forms.PautaForm;
 import com.konoha.votacao.mappers.PautaMapper;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Perfil;
+import com.konoha.votacao.modelo.Usuario;
+import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.PautaService;
 
 @RunWith(SpringRunner.class)
@@ -48,6 +53,11 @@ public class PautaControllerTest {
 	private PautaService pautaService;
 	@MockBean
 	private PautaMapper pautaMapper;
+	@MockBean
+	private TokenService tokenService;
+	@MockBean
+	private UsuarioRepository usuarioRepository;
+	
 	
 	private final String TITULO = "Título";
 	private final String DESCRICAO = "Descricao";
@@ -58,6 +68,9 @@ public class PautaControllerTest {
 	private PautaForm pautaForm;
 	private Pauta pauta;
 	private PautaDTO pautaDto;
+	
+	private final String AUTH_HEADER = "Authorization";
+	private final String AUTH_HEADER_CONTENT = "Bearer x.x.x.x";
 	
 	@Before
 	public void setUp() {
@@ -73,6 +86,14 @@ public class PautaControllerTest {
 		pautaDto = new PautaDTO();
 		pautaDto.setId(pauta.getId());
 		pautaDto.add(new Link("/"));
+		
+		Usuario usuario = new Usuario();
+		usuario.setCpf("00000000000");
+		Perfil perfil = new Perfil();
+		perfil.setName("ROLE_ADMIN");
+		usuario.setPerfis(Arrays.asList(perfil));
+		when(tokenService.isValid(any())).thenReturn(true);
+		when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
 	}
 	
 	/**
@@ -87,6 +108,7 @@ public class PautaControllerTest {
 		
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isCreated())
 				.andExpect(header().string("Location", 
@@ -106,6 +128,7 @@ public class PautaControllerTest {
 		
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -123,6 +146,7 @@ public class PautaControllerTest {
 		
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -143,6 +167,7 @@ public class PautaControllerTest {
 		
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -159,6 +184,7 @@ public class PautaControllerTest {
 		pautaForm.setTitulo("v");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
 				.content(asJsonString(pautaForm)))		
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
@@ -175,7 +201,8 @@ public class PautaControllerTest {
 		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/" + ASSEMBLEIA_ID + "/pautas/1")
-				.contentType(MediaType.APPLICATION_JSON))		
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))		
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty())
 				.andExpect(jsonPath("$._links").isNotEmpty());
@@ -191,7 +218,8 @@ public class PautaControllerTest {
 		when(pautaService.findById(1L)).thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/1")
-				.contentType(MediaType.APPLICATION_JSON))		
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))		
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -208,7 +236,8 @@ public class PautaControllerTest {
 		when(pautaMapper.pautaToPautaDto(pauta, ASSEMBLEIA_ID)).thenReturn(pautaDto);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
-				.contentType(MediaType.APPLICATION_JSON))		
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))		
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -224,7 +253,8 @@ public class PautaControllerTest {
 			.thenThrow(NotFoundException.class);
 		
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/1/pautas")
-				.contentType(MediaType.APPLICATION_JSON))		
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))		
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -237,7 +267,8 @@ public class PautaControllerTest {
 	@Test
 	public void testDeletarPautaComSessaoExistente() throws Exception {
 		doNothing().when(pautaService).deleteById(pauta.getId());		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/1"))						
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))						
 				.andExpect(status().isNoContent());
 	}
 	
@@ -251,7 +282,8 @@ public class PautaControllerTest {
 		doThrow(new NotFoundException("")).doNothing()
 			.when(pautaService)
 			.deleteById(PAUTA_ID);
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/"+PAUTA_ID))
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/12/pautas/"+PAUTA_ID)
+			.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 			.andExpect(status().isNotFound());
 	}
 	
