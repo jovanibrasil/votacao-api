@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.konoha.votacao.controllers.forms.ItemPautaForm;
 import com.konoha.votacao.dto.ItemPautaDTO;
+import com.konoha.votacao.forms.ItemPautaForm;
 import com.konoha.votacao.mappers.ItemPautaMapper;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.services.ItemPautaService;

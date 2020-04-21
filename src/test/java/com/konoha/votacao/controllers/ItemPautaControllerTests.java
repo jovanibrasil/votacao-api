@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Before;
@@ -38,12 +39,16 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
-import com.konoha.votacao.controllers.forms.ItemPautaForm;
+import com.konoha.votacao.configs.security.TokenService;
 import com.konoha.votacao.dto.ItemPautaDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
+import com.konoha.votacao.forms.ItemPautaForm;
 import com.konoha.votacao.mappers.ItemPautaMapper;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Perfil;
+import com.konoha.votacao.modelo.Usuario;
+import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.ItemPautaService;
 
 @RunWith(SpringRunner.class)
@@ -59,6 +64,12 @@ public class ItemPautaControllerTests {
 	private ItemPautaService itemPautaService;
 	@MockBean
 	private ItemPautaMapper itemPautaMapper;
+	
+	@MockBean
+	private TokenService tokenService;
+	@MockBean
+	private UsuarioRepository usuarioRepository;
+	
 
 	private ItemPautaForm itemPautaForm;
 	private ItemPauta itemPauta;
@@ -69,6 +80,9 @@ public class ItemPautaControllerTests {
 	private final Long PAUTA_ID = 2L;
 	private final long ITEM_PAUTA_ID = 49;
 	private final LocalDateTime CREATION_DATE = LocalDateTime.now();
+	
+	private final String AUTH_HEADER = "Authorization";
+	private final String AUTH_HEADER_CONTENT = "Bearer x.x.x.x";
 
 	@Before
 	public void setUp() {
@@ -90,6 +104,14 @@ public class ItemPautaControllerTests {
 		itemPautaDto.setTitulo(TITULO);
 		itemPautaDto.setDescricao(DESCRICAO);
 		itemPautaDto.setDataCriacao(CREATION_DATE);
+		
+		Usuario usuario = new Usuario();
+		usuario.setCpf("00000000000");
+		Perfil perfil = new Perfil();
+		perfil.setName("ROLE_ADMIN");
+		usuario.setPerfis(Arrays.asList(perfil));
+		when(tokenService.isValid(any())).thenReturn(true);
+		when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
 	}
 
 	/**
@@ -103,7 +125,9 @@ public class ItemPautaControllerTests {
 		when(itemPautaService.save(any())).thenReturn(itemPauta);
 
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(itemPautaForm)))
 				.andExpect(status().isCreated())
 				.andExpect(header().string("Location", containsString("/assembleias/12/pautas/2/itens/49")))
 				.andExpect(jsonPath("$").doesNotExist());
@@ -119,7 +143,9 @@ public class ItemPautaControllerTests {
 	public void testPostItemPautaTituloNull() throws Exception {
 		itemPautaForm.setTitulo(null);
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -134,7 +160,9 @@ public class ItemPautaControllerTests {
 	public void testPostItemPautaTitleEmBranco() throws Exception {
 		itemPautaForm.setTitulo("          ");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -149,7 +177,9 @@ public class ItemPautaControllerTests {
 	public void testPostItemPautaTituloMenorQueTamanhoMinimo() throws Exception {
 		itemPautaForm.setTitulo("abcd");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(itemPautaForm)))
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
@@ -163,7 +193,9 @@ public class ItemPautaControllerTests {
 	public void testPostItemPautaTituloMaiorQueTamanhoMaximo() throws Exception {
 		itemPautaForm.setTitulo("abcd");
 		mvc.perform(MockMvcRequestBuilders.post("/assembleias/12/pautas/2/itens")
-				.contentType(MediaType.APPLICATION_JSON).content(asJsonString(itemPautaForm)))
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(itemPautaForm)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -186,7 +218,8 @@ public class ItemPautaControllerTests {
 		when(itemPautaMapper.itemPautaToItemPautaDTO(itemPauta)).thenReturn(itemPautaDto);
 		when(itemPautaMapper.itemPautaFormToItemPauta(itemPautaForm)).thenReturn(itemPauta);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta);
-		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/1"))
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty())
 				.andExpect(jsonPath("$.id", equalTo(ITEM_PAUTA_ID)))
@@ -208,7 +241,8 @@ public class ItemPautaControllerTests {
 		when(itemPautaService.findById(any())).thenThrow(NotFoundException.class);
 
 		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens/99")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -224,7 +258,8 @@ public class ItemPautaControllerTests {
 		when(itemPautaService.findByPautaId(any(), any()))
 				.thenReturn(new PageImpl<ItemPauta>(Arrays.asList(itemPauta, itemPauta, itemPauta)));
 
-		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -239,7 +274,8 @@ public class ItemPautaControllerTests {
 		when(itemPautaMapper.itemPautaFormToItemPauta(itemPautaForm)).thenReturn(itemPauta);
 		when(itemPautaService.findByPautaId(any(), any())).thenThrow(NotFoundException.class);
 
-		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens"))
+		mvc.perform(MockMvcRequestBuilders.get("/assembleias/12/pautas/2/itens")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}

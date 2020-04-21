@@ -42,7 +42,7 @@ public class VotoServiceImpl implements VotoService {
 	public void saveVoto(Long itemPautaId, Boolean votoValue) {
 		// TODO ID do usuário deve ser buscado do contexto de segurança
 		Long usuarioId = 1L;
-		Usuario usuario = usuarioService.buscaUsuario(usuarioId);
+		Usuario usuario = usuarioService.buscaUsuarioById(usuarioId);
 		
 		// Verifica se o voto já foi cadastrado no sistema
 		Optional<Voto> optVotoSalvo = votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPautaId, usuario.getId());

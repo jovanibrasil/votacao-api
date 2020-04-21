@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Before;
@@ -39,12 +40,16 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.konoha.votacao.configs.security.TokenService;
 import com.konoha.votacao.dto.AssembleiaDTO;
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.mappers.AssembleiaMapper;
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Perfil;
+import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.repository.AssembleiaRepository;
+import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.services.AssembleiaService;
 
 @RunWith(SpringRunner.class)
@@ -62,15 +67,20 @@ public class AssembleiaControllerTest {
 	private static final String URL = "/assembleias";
 
 	private AssembleiaDTO assembleiaDTO;
-
 	private Assembleia assembleia;
+	
+	private final String AUTH_HEADER = "Authorization";
+	private final String AUTH_HEADER_CONTENT = "Bearer x.x.x.x";
 
 	@MockBean
-	AssembleiaService assembleiaService;
-
+	private AssembleiaService assembleiaService;
 	@MockBean
-	AssembleiaMapper assembleiaMapper;
-
+	private AssembleiaMapper assembleiaMapper;
+	@MockBean
+	private TokenService tokenService;
+	@MockBean
+	private UsuarioRepository usuarioRepository;
+	
 	@Autowired
 	private AssembleiaRepository assembleiaRepository;
 
@@ -97,6 +107,14 @@ public class AssembleiaControllerTest {
 		assembleiaDTO.setDescricao(DESCRICAO);
 		assembleiaDTO.setDataAssembleia(DATA_ASSEMBLEIA);
 		assembleiaDTO.setDataCriacao(DATA_CRIACAO);
+		
+		Usuario usuario = new Usuario();
+		usuario.setCpf("00000000000");
+		Perfil perfil = new Perfil();
+		perfil.setName("ROLE_ADMIN");
+		usuario.setPerfis(Arrays.asList(perfil));
+		when(tokenService.isValid(any())).thenReturn(true);
+		when(usuarioRepository.findById(any())).thenReturn(Optional.of(usuario));
 
 	}
 
@@ -109,8 +127,11 @@ public class AssembleiaControllerTest {
 	public void testSave() throws Exception {
 		when(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDTO)).thenReturn(assembleia);
 		when(assembleiaService.save(any())).thenReturn(assembleia);
-		mvc.perform(MockMvcRequestBuilders.post(URL).content(asJsonString(assembleia))
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.content(asJsonString(assembleia))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated());
 
 	}
@@ -125,8 +146,11 @@ public class AssembleiaControllerTest {
 	public void testPostAssembeliaTituloNull() throws Exception {
 		assembleiaDTO.setTitulo(null);
 
-		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(assembleiaDTO)))
+				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
@@ -141,7 +165,9 @@ public class AssembleiaControllerTest {
 		assembleiaDTO.setTitulo("              ");
 
 		mvc.perform(MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(assembleiaDTO))).andExpect(status().isBadRequest())
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT)
+				.content(asJsonString(assembleiaDTO)))
+				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
 
@@ -161,7 +187,9 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaDtoToAssembleia(any())).thenReturn(assembleia);
 		when(assembleiaMapper.assembleiaToAssembleiaDto(any())).thenReturn(assembleiaDTO);
 
-		mvc.perform(MockMvcRequestBuilders.get(URL + "/1")).andExpect(status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get(URL + "/1")
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
+				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id", is(1L)));
 
 		verify(assembleiaService, times(1)).findById(ASSEMBLEIA_ID);
@@ -179,7 +207,9 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaToAssembleiaDto(assembleia)).thenReturn(assembleiaDTO);
 		when(assembleiaService.findById(any())).thenThrow(NotFoundException.class);
 
-		mvc.perform(MockMvcRequestBuilders.get(URL + "/99").contentType(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.get(URL + "/99")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$").isNotEmpty());
 	}
@@ -196,7 +226,9 @@ public class AssembleiaControllerTest {
 		when(assembleiaMapper.assembleiaDtoToAssembleia(dto)).thenReturn(assembleia);
 		when(assembleiaService.findAll(any())).thenReturn(new PageImpl<Assembleia>(Arrays.asList(assembleia)));
 
-		mvc.perform(MockMvcRequestBuilders.get(URL)).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.get(URL)
+			.header(AUTH_HEADER, AUTH_HEADER_CONTENT))
+			.andExpect(status().isOk());
 	}
 	
 	/**
@@ -207,7 +239,8 @@ public class AssembleiaControllerTest {
 	@Test
 	public void testDeletarAssembleia() throws Exception {
 		doNothing().when(assembleiaService).deleteById(ASSEMBLEIA_ID);		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + ASSEMBLEIA_ID))						
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + ASSEMBLEIA_ID)
+			.header(AUTH_HEADER, AUTH_HEADER_CONTENT))						
 			.andExpect(status().isNoContent());
 	}
 	
@@ -219,7 +252,8 @@ public class AssembleiaControllerTest {
 	@Test
 	public void testDeletarAssembleiaIdInvalido() throws Exception {
 		doThrow(NotFoundException.class).when(assembleiaService).deleteById(Long.parseLong("0000"));		
-		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + "0000"))						
+		mvc.perform(MockMvcRequestBuilders.delete("/assembleias/" + "0000")				
+			.header(AUTH_HEADER, AUTH_HEADER_CONTENT))						
 			.andExpect(status().isNotFound());
 	}
 

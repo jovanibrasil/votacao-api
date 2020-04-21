@@ -1,4 +1,4 @@
-package com.konoha.votacao.controllers.forms;
+package com.konoha.votacao.forms;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

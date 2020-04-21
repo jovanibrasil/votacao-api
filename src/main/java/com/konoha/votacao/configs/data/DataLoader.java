@@ -1,20 +1,24 @@
 package com.konoha.votacao.configs.data;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.modelo.Pauta;
+import com.konoha.votacao.modelo.Perfil;
 import com.konoha.votacao.modelo.Sessao;
 import com.konoha.votacao.modelo.Usuario;
 import com.konoha.votacao.modelo.Voto;
 import com.konoha.votacao.repository.AssembleiaRepository;
 import com.konoha.votacao.repository.ItemPautaRepository;
 import com.konoha.votacao.repository.PautaRepository;
+import com.konoha.votacao.repository.PerfilRepository;
 import com.konoha.votacao.repository.UsuarioRepository;
 import com.konoha.votacao.repository.VotoRepository;
 
@@ -30,9 +34,10 @@ public class DataLoader implements CommandLineRunner {
 	private final ItemPautaRepository itemPautaRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final AssembleiaRepository assembleiaRepository;
+	private final PerfilRepository perfilRepository;
 	
 	private Voto voto;
-	private Usuario usuario;
+	private Usuario admin;
 	private Pauta pauta;
 	private ItemPauta itemPauta;
 	private Assembleia assembleia;
@@ -40,11 +45,28 @@ public class DataLoader implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		usuario = new Usuario();
+		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
+		
+		Perfil perfilUser = new Perfil();
+		perfilUser.setName("ROLE_USER");
+		perfilUser = perfilRepository.save(perfilUser);
+		Perfil perfilAdmin = new Perfil();
+		perfilAdmin.setName("ROLE_ADMIN");
+		perfilAdmin = perfilRepository.save(perfilAdmin);
+		
+		Usuario usuario = new Usuario();
 		usuario.setCpf("00000000000");
-		usuario.setNomeUsuario("nomeUsuario");
-		usuario.setSenha("123456");
-		usuario = usuarioRepository.save(usuario);
+		usuario.setNomeUsuario("usuario");
+		usuario.setSenha(bCrypt.encode("123456"));
+		usuario.setPerfis(Arrays.asList(perfilUser));
+		usuarioRepository.save(usuario);
+		
+		admin = new Usuario();
+		admin.setCpf("11111111111");
+		admin.setNomeUsuario("admin");
+		admin.setSenha(bCrypt.encode("123456"));
+		admin.setPerfis(Arrays.asList(perfilAdmin));
+		admin = usuarioRepository.save(admin);
 		
 		assembleia = new Assembleia();
 		assembleia.setTitulo("Assembleia 0");
@@ -69,7 +91,7 @@ public class DataLoader implements CommandLineRunner {
 		itemPauta.setPauta(pauta);
 		itemPauta = itemPautaRepository.save(itemPauta);
 		
-		voto = new Voto(usuario, itemPauta, true);
+		voto = new Voto(admin, itemPauta, true);
 		voto = votoRepository.save(voto);
 		
 		assembleia = new Assembleia();
@@ -95,7 +117,7 @@ public class DataLoader implements CommandLineRunner {
 		itemPauta.setPauta(pauta);
 		itemPauta = itemPautaRepository.save(itemPauta);
 		
-		voto = new Voto(usuario, itemPauta, true);
+		voto = new Voto(admin, itemPauta, true);
 		voto = votoRepository.save(voto);
 		
 	}

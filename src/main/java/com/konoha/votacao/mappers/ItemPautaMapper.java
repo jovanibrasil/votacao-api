@@ -3,8 +3,8 @@ package com.konoha.votacao.mappers;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 
-import com.konoha.votacao.controllers.forms.ItemPautaForm;
 import com.konoha.votacao.dto.ItemPautaDTO;
+import com.konoha.votacao.forms.ItemPautaForm;
 import com.konoha.votacao.modelo.ItemPauta;
 
 @Mapper

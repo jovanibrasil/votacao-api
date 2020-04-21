@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.konoha.votacao.controllers.forms.VotoForm;
 import com.konoha.votacao.dto.VotoDTO;
+import com.konoha.votacao.forms.VotoForm;
 import com.konoha.votacao.mappers.VotoMapper;
 import com.konoha.votacao.services.VotoService;
 
