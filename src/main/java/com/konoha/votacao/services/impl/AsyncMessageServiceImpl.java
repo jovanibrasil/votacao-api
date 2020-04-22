@@ -34,7 +34,7 @@ public class AsyncMessageServiceImpl implements AsyncMessageService {
 		send.addCallback(new ListenableFutureCallback<SendResult<String, MessageDTO>>() {
 			@Override
 			public void onSuccess(SendResult<String, MessageDTO> result) {
-				log.info("Mensagem enviada. Offset = {}", result.getRecordMetadata().offset());
+				log.info("Mensagem enviada.");
 			}
 			@Override
 			public void onFailure(Throwable ex) {

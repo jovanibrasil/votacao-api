@@ -45,8 +45,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers("/votos").hasAnyRole("USER", "ADMIN") // Qualquer um (USER ou ADMIN) pode votor e buscar resultados de votação
+			.antMatchers(HttpMethod.GET, "/assembleias/**").hasAnyRole("USER", "ADMIN") // Alterações 
 			.antMatchers("/assembleias/**").hasRole("ADMIN") // Administrador pode modificar o que quiser 
-			.antMatchers(HttpMethod.GET, "/assembleias/*").hasAnyRole("USER", "ADMIN") // Alterações 
 			.antMatchers(HttpMethod.POST, "/auth").permitAll()
 			.anyRequest().authenticated()
 			.and()
