@@ -10,8 +10,11 @@ No cooperativismo cada associado possui um voto e as decisões são tomadas em a
 - É possível votar. Cada associado é identificado por um ID único e pode votar apenas uma vez por item de pauta.
 - Uma sessão de votação é atrelada a uma pauta e fica aberta por um tempo determinado ou 1 minuto por default.
 - É possível buscar os resultados de votação de uma pauta.
+- Um usuário deve estar autenticado para utilizar o sistema.
 
 Para informar o resultado das votações para a plataforma, quando uma votação fecha uma mensagem com o resultado da votação é enviada para uma instância de mensageria. Atualmente para fins de simplificação e teste enviamos e recebemos essa mensagem (somos producer e consumer). 
+
+A autenticação é feita utilizando JWT, sendo que associados tem papel de USER e podem apenas votar e buscar (assembleias, pautas, etc) e os admistradores do sistema, que poderiam ser os gerentes, possuem papel de ADMIN e pode realizar todas as operações no sistema. 
 
 A API foi implementada utilizando **Spring Boot**, **Maven**, H2, PostgresQL, Lombok, Mapstruct. O serviço de mensageria utilizado foi o **Kafka**,  sendo este utilizado junto ao Docker. A documentação foi feita utilizando **Swagger**, inclusive você pode dar uma olhada nela [aqui](https://app.swaggerhub.com/apis-docs/konohaTeam/votacao-api/1.0.0-oas3). Os testes foram feitos utilizando **Junit**, **Mockito**, Jacoco e o **Postman**. Para controle de versionamento usamos o git seguindo alguns princípios do **Gitflow**. Todo o desenvolvimento foi sempre pautado no desenvolvimento com código limpo e orientado a testes (**TDD**).
 
