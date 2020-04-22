@@ -24,7 +24,9 @@ import com.konoha.votacao.modelo.Pauta;
 import com.konoha.votacao.services.PautaService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assembleias/{assembleiaId}/pautas")
@@ -42,7 +44,7 @@ public class PautaController {
 	 */
 	@PostMapping
 	public ResponseEntity<?> salvaPauta(@RequestBody @Valid PautaForm pautaForm, @PathVariable Long assembleiaId) {
-
+		log.info("Salvando nova pauta.");
 		pautaForm.setAssembleiaId(assembleiaId);
 		Pauta pauta = pautaService.save(pautaMapper.pautaFormToPauta(pautaForm));
 
@@ -61,7 +63,7 @@ public class PautaController {
 	 */
 	@GetMapping("/{pautaId}")
 	public ResponseEntity<PautaDTO> buscaPauta(@PathVariable Long pautaId, @PathVariable Long assembleiaId) {
-
+		log.info("Buscando pauta ID = {}", pautaId);
 		Pauta pauta = pautaService.findById(pautaId);
 		PautaDTO pautaDto = pautaMapper.pautaToPautaDto(pauta, assembleiaId);
 		return ResponseEntity.ok(pautaDto);
@@ -76,7 +78,7 @@ public class PautaController {
 	 */
 	@GetMapping
 	public ResponseEntity<Page<PautaDTO>> listaPautasPorAssembleia(@PathVariable Long assembleiaId, Pageable pageable) {
-
+		log.info("Listando pautas da assembleia {}", assembleiaId);
 		Page<Pauta> pautas = pautaService.findByAssembleiaId(assembleiaId, pageable);
 		Page<PautaDTO> pautaDtoList = pautas.map(pauta -> pautaMapper.pautaToPautaDto(pauta, assembleiaId));
 		return ResponseEntity.ok(pautaDtoList);
@@ -90,7 +92,8 @@ public class PautaController {
 	 */
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<?> remover(@PathVariable Long id) {		
+	public ResponseEntity<?> remover(@PathVariable Long id) {	
+		log.info("Removendo assembleia ID = {}", id);
 		pautaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}

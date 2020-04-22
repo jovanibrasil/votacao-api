@@ -2,7 +2,6 @@ package com.konoha.votacao.services.impl;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,14 +10,14 @@ import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.repository.AssembleiaRepository;
 import com.konoha.votacao.services.AssembleiaService;
 
+import lombok.RequiredArgsConstructor;
+
 	
 @Service
+@RequiredArgsConstructor
 public class AssembleiaServiceImpl implements AssembleiaService {
 
-	
-
-	@Autowired
-	AssembleiaRepository repository;
+	private final AssembleiaRepository repository;
 
 	@Override
 	public Assembleia save(Assembleia assembleia) {
@@ -44,21 +43,20 @@ public class AssembleiaServiceImpl implements AssembleiaService {
 	}
 	
 	@Override
-  public Assembleia atualizar(Assembleia assembleia) {
-    
-    Assembleia assembleiaSalva = findById(assembleia.getId());
+	public Assembleia atualizar(Assembleia assembleia) {
+		Assembleia assembleiaSalva = findById(assembleia.getId());
 
-    if (assembleia.getDescricao() != null) {
-      assembleiaSalva.setDescricao(assembleia.getDescricao());
-    }
-    if (assembleia.getDataAssembleia() != null) {
-      assembleiaSalva.setDataAssembleia(assembleia.getDataAssembleia());
-    }
-    if (assembleia.getTitulo() != null) {
-      assembleiaSalva.setTitulo(assembleia.getTitulo());
-    }
+		if (assembleia.getDescricao() != null) {
+			assembleiaSalva.setDescricao(assembleia.getDescricao());
+		}
+		if (assembleia.getDataAssembleia() != null) {
+			assembleiaSalva.setDataAssembleia(assembleia.getDataAssembleia());
+		}
+		if (assembleia.getTitulo() != null) {
+			assembleiaSalva.setTitulo(assembleia.getTitulo());
+		}
 
-    return repository.save(assembleiaSalva);
-  }
+		return repository.save(assembleiaSalva);
+	}
 
 }

@@ -61,7 +61,7 @@ public class ResultadoVotacaoSchedulerServiceImpl implements ResultadoVotacaoSch
 				dataFechamento.getDayOfMonth(),
 				dataFechamento.getMonth().getValue());
 		
-		log.info("Task agendada - CRON STRING: {}", cronString);
+		log.info("Task agendada para fechamento de sessão - CRON STRING: {} - ", cronString, dataFechamento);
 		
 		ScheduledFuture<?> future =  taskRegistrar.schedule(task, new CronTrigger(cronString));
 		scheduledTasks.put(taskUUID, future);

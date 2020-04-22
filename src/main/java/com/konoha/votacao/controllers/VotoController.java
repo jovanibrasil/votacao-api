@@ -20,7 +20,9 @@ import com.konoha.votacao.mappers.VotoMapper;
 import com.konoha.votacao.services.VotoService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/votos")
@@ -36,6 +38,7 @@ public class VotoController {
 	 */
 	@PostMapping
 	public ResponseEntity<?> salvarVoto(@RequestBody @Valid VotoForm votoForm){
+		log.info("Salvando voto do usuário.");
 		votoService.saveVoto(votoForm.getItemPautaId(), votoForm.getVoto());
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -51,7 +54,7 @@ public class VotoController {
 	 */
 	@GetMapping("/{pautaId}")
 	public ResponseEntity<List<VotoDTO>> buscaVotosDeUmaPauta(@PathVariable Long pautaId){
-		
+		log.info("Buscando votos da pauta ID = {}", pautaId);
 		List<VotoDTO> resultados = votoService.findResultadoVotacaoByPautaId(pautaId).stream()
 				.map(votoMapper::resultadoItemPautaToVotoDto)
 				.collect(Collectors.toList());
