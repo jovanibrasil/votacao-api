@@ -25,7 +25,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 	 */
 	@Override
 	public Usuario buscaUsuarioById(Long usuarioId) {
-
 		Optional<Usuario> optUsuario = usuarioRepository.findById(usuarioId);
 		
 		if(optUsuario.isPresent()) {

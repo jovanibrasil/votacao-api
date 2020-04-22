@@ -11,8 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @RestControllerAdvice
 public class RestExceptionHandler {
 
@@ -37,13 +41,17 @@ public class RestExceptionHandler {
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
 	@ExceptionHandler(NotFoundException.class)
 	public List<String> handle(NotFoundException exception) {
-		return Arrays.asList(exception.getMessage());
+		String message = exception.getMessage();
+		log.info(message);
+		return Arrays.asList(message);
 	}
 	
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(VotoException.class)
 	public List<String> handle(VotoException exception) {
-		return Arrays.asList(exception.getMessage());
+		String message = exception.getMessage();
+		log.info(message);
+		return Arrays.asList(message);
 	}
 	
 }

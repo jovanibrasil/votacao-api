@@ -22,7 +22,9 @@ import com.konoha.votacao.modelo.ItemPauta;
 import com.konoha.votacao.services.ItemPautaService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assembleias/{assembleiaId}/pautas/{pautaId}/itens")
@@ -42,7 +44,7 @@ public class ItemPautaController {
 	@PostMapping
 	public ResponseEntity<?> salvaItemPauta(@RequestBody @Valid ItemPautaForm itemPautaForm, 
 			@PathVariable Long assembleiaId, @PathVariable Long pautaId){
-			
+		log.info("Salvando novo item de pauta.");	
 		ItemPauta itemPauta = itemPautaService
 				.save(itemPautaMapper.itemPautaFormToItemPauta(itemPautaForm));
 		URI uri = ServletUriComponentsBuilder
@@ -63,7 +65,7 @@ public class ItemPautaController {
 	 */
 	@GetMapping("/{itemPautaId}")
 	public ResponseEntity<?> buscaItemPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, @PathVariable Long itemPautaId){
-			
+		log.info("Buscando item de pauta ID = {}", itemPautaId);
 		ItemPauta itemPauta = itemPautaService.findById(itemPautaId);
 		ItemPautaDTO itemPautaForm = itemPautaMapper.itemPautaToItemPautaDTO(itemPauta);
 		
@@ -80,7 +82,7 @@ public class ItemPautaController {
 	 */
 	@GetMapping
 	public ResponseEntity<?> listaItensPauta(@PathVariable Long assembleiaId, @PathVariable Long pautaId, Pageable pageable){
-			
+		log.info("Listando itens da pauta ID = {}", pautaId);	
 		Page<ItemPauta> itemPautaPage = itemPautaService.findByPautaId(pautaId, pageable);
 		Page<ItemPautaDTO> itemPautaDtoPage = itemPautaPage.map(i -> itemPautaMapper.itemPautaToItemPautaDTO(i));		
 		return ResponseEntity.ok(itemPautaDtoPage);

@@ -18,7 +18,9 @@ import com.konoha.votacao.forms.LoginForm;
 import com.konoha.votacao.modelo.Usuario;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -35,13 +37,13 @@ public class AutenticacaoController {
 	 */
 	@PostMapping
 	public ResponseEntity<TokenDTO> autenticar(@Valid @RequestBody LoginForm loginForm){
-		
 		try {
 			UsernamePasswordAuthenticationToken dadosLogin = new UsernamePasswordAuthenticationToken(loginForm.getCpf(), loginForm.getSenha());
 			Authentication auth = authManager.authenticate(dadosLogin);
 			String token = tokenService.gerarToken((Usuario)auth.getPrincipal());
 			return ResponseEntity.ok(new TokenDTO(token, "Bearer"));
 		} catch (AuthenticationException e) {
+			log.info("Erro ao realizar autenticação. {}", e.getMessage());
 			return ResponseEntity.badRequest().build();
 		}
 	}

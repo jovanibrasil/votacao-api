@@ -25,7 +25,9 @@ import com.konoha.votacao.modelo.Assembleia;
 import com.konoha.votacao.services.AssembleiaService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("assembleias")
 @RequiredArgsConstructor
@@ -37,9 +39,13 @@ public class AssembleiaController {
 
 	@PostMapping
 	public ResponseEntity<?> create(@Valid @RequestBody AssembleiaDTO assembleiaDto) {
+		log.info("Criando nova assembleia.");
+		
 		Assembleia assembleia = assembleiaService.save(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDto));
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/assembleias/{assembleiaId}")
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/assembleias/{assembleiaId}")
 				.buildAndExpand(assembleia.getId()).toUri();
+		
 		return ResponseEntity.created(uri).build();
 	}
 
@@ -51,6 +57,7 @@ public class AssembleiaController {
 	 */
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AssembleiaDTO> detalhar(@PathVariable Long id) {
+		log.info("Buscando assembleia com ID = {}", id);
 		Assembleia assembleia = assembleiaService.findById(id);
 		AssembleiaDTO assembleiaDTO = assembleiaMapper.assembleiaToAssembleiaDto(assembleia);
 		return ResponseEntity.ok(assembleiaDTO);
@@ -63,7 +70,7 @@ public class AssembleiaController {
 	 */
 	@GetMapping
 	public ResponseEntity<?> listarAssembleias(Pageable pageable) {
-
+		log.info("Listando assembleias.");
 		Page<Assembleia> assembleiaPage = assembleiaService.findAll(pageable);
 		Page<AssembleiaDTO> assembleiaDtoPage = assembleiaPage.map(i -> assembleiaMapper.assembleiaToAssembleiaDto(i));
 		return ResponseEntity.ok(assembleiaDtoPage);
@@ -77,27 +84,30 @@ public class AssembleiaController {
 	 */
 	@Transactional
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> remover(@PathVariable Long id) {		
+	public ResponseEntity<?> remover(@PathVariable Long id) {
+		log.info("Removendo assembleia ID = {}", id);
 		assembleiaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+
 	/**
-   * Atualiza uma assembleia pelo ID.
-   * @Transactional serve para o spring comitar a transacao no final do metado. 
-   * @param id
-   * @return
-   */
-  @Transactional  
-  @PatchMapping("/{id}")
-  public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizarAssembleiaForm form) {
-    
-    Assembleia assembleia  = assembleiaMapper.atualizarAssembleiaFormToAssembleia(form);
-    assembleia.setId(id);
-    assembleia =assembleiaService.atualizar(assembleia);
-    
-    return ResponseEntity.ok(assembleiaMapper.assembleiaToAssembleiaDto(assembleia));
-    
-  }
+	 * Atualiza uma assembleia pelo ID.
+	 * 
+	 * @Transactional serve para o spring comitar a transacao no final do metado.
+	 * @param id
+	 * @return
+	 */
+	@Transactional
+	@PatchMapping("/{id}")
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizarAssembleiaForm form) {
+		log.info("Atualizando assembleia ID = {}", id);
+		Assembleia assembleia = assembleiaMapper.atualizarAssembleiaFormToAssembleia(form);
+		assembleia.setId(id);
+		assembleia = assembleiaService.atualizar(assembleia);
+
+		return ResponseEntity.ok(assembleiaMapper.assembleiaToAssembleiaDto(assembleia));
+
+	}
 	
 	
 }
