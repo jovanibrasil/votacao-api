@@ -65,7 +65,7 @@ public class VotoServiceTest {
 		
 		usuario = new Usuario();
 		usuario.setId(1L);
-		usuario.setCpf("00000000000");
+		usuario.setCpf("10879065044");
 		usuario.setNomeUsuario("nomeUsuario");
 		usuario.setSenha("123456");
 		
