@@ -55,14 +55,14 @@ public class DataLoader implements CommandLineRunner {
 		perfilAdmin = perfilRepository.save(perfilAdmin);
 		
 		Usuario usuario = new Usuario();
-		usuario.setCpf("00000000000");
+		usuario.setCpf("10879065044");
 		usuario.setNomeUsuario("usuario");
 		usuario.setSenha(bCrypt.encode("123456"));
 		usuario.setPerfis(Arrays.asList(perfilUser));
 		usuarioRepository.save(usuario);
 		
 		admin = new Usuario();
-		admin.setCpf("11111111111");
+		admin.setCpf("05589097010");
 		admin.setNomeUsuario("admin");
 		admin.setSenha(bCrypt.encode("123456"));
 		admin.setPerfis(Arrays.asList(perfilAdmin));

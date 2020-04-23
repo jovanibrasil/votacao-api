@@ -106,7 +106,7 @@ public class ItemPautaControllerTests {
 		itemPautaDto.setDataCriacao(CREATION_DATE);
 		
 		Usuario usuario = new Usuario();
-		usuario.setCpf("00000000000");
+		usuario.setCpf("10879065044");
 		Perfil perfil = new Perfil();
 		perfil.setName("ROLE_ADMIN");
 		usuario.setPerfis(Arrays.asList(perfil));

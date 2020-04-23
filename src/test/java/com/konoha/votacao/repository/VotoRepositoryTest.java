@@ -59,7 +59,7 @@ public class VotoRepositoryTest {
 		votoRepository.deleteAll();
 		
 		usuario = new Usuario();
-		usuario.setCpf("00000000000");
+		usuario.setCpf("10879065044");
 		usuario.setNomeUsuario("nomeUsuario");
 		usuario.setSenha("123456");
 		usuario = usuarioRepository.save(usuario);
