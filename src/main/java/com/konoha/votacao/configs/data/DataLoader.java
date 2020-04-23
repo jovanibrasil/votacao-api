@@ -73,10 +73,12 @@ public class DataLoader implements CommandLineRunner {
 		assembleia.setDescricao("Descrição Assembleia 0");
 		assembleia = assembleiaRepository.save(assembleia);
 		
+		/**
+		 * Pauta fechada
+		 */
 		Sessao sessao = new Sessao();
-		sessao.setDuracaoSessao(3L);
+		sessao.setDuracaoSessao(1L);
 		sessao.setInicioSessao(LocalDateTime.now().minusHours(2L));
-		
 		
 		pauta = new Pauta();
 		pauta.setTitulo("Pauta 0");
@@ -100,7 +102,7 @@ public class DataLoader implements CommandLineRunner {
 		assembleia = assembleiaRepository.save(assembleia);
 		
 		sessao = new Sessao();
-		sessao.setDuracaoSessao(1L);
+		sessao.setDuracaoSessao(3L);
 		sessao.setInicioSessao(LocalDateTime.now().minusHours(2L));
 		
 		

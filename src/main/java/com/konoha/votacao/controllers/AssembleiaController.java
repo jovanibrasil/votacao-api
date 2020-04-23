@@ -43,7 +43,7 @@ public class AssembleiaController {
 		
 		Assembleia assembleia = assembleiaService.save(assembleiaMapper.assembleiaDtoToAssembleia(assembleiaDto));
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/assembleias/{assembleiaId}")
+				.path("/{assembleiaId}")
 				.buildAndExpand(assembleia.getId()).toUri();
 		
 		return ResponseEntity.created(uri).build();

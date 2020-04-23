@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.konoha.votacao.exceptions.VotoException;
@@ -40,25 +41,23 @@ public class VotoServiceImpl implements VotoService {
 	@Transactional
 	@Override
 	public void saveVoto(Long itemPautaId, Boolean votoValue) {
-		// TODO ID do usuário deve ser buscado do contexto de segurança
-		Long usuarioId = 1L;
-		Usuario usuario = usuarioService.buscaUsuarioById(usuarioId);
+		String cpf = SecurityContextHolder.getContext().getAuthentication().getName();
+		Usuario usuario = usuarioService.findByCpf(cpf);
 		
 		// Verifica se o voto já foi cadastrado no sistema
 		Optional<Voto> optVotoSalvo = votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(itemPautaId, usuario.getId());
 		if(optVotoSalvo.isPresent()) {
-			throw new VotoException("Voto já registrado no sistema.");
+			throw new VotoException("Voto já registrado anteriormente no sistema.");
 		}
 		
 		// Verifica se o item de pauta pertence a uma pauta aberta
 		ItemPauta itemPauta = itemPautaService.findById(itemPautaId);
 		
 		if(itemPauta.getPauta().isAberta()) {
-			// TODO Verifica se o usuário pode votar na pauta
 			Voto voto = new Voto(usuario, itemPauta, votoValue);
 			votoRepository.save(voto);
 		}else {
-			throw new VotoException("Pauta não está aberta");
+			throw new VotoException("Desculpe, a pauta não está aberta para votação.");
 		}
 		
 	}
@@ -74,7 +73,7 @@ public class VotoServiceImpl implements VotoService {
 	@Override
 	public List<ResultadoItemPauta> findResultadoVotacaoByPautaId(Long pautaId) {
 		Pauta pauta = pautaService.findById(pautaId);
-		if(pauta.isAberta()) throw new VotoException("Votação não está fechada ainda. Teste mais tarde.");
+		if(pauta.isAberta()) throw new VotoException("Votação aberta, aguarde seu fechamento e tente novamente.");
 		return computadorDeVotos.computaVotos(pauta);
 	}
 	

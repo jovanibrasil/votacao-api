@@ -14,8 +14,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.konoha.votacao.exceptions.NotFoundException;
 import com.konoha.votacao.exceptions.VotoException;
@@ -87,6 +91,11 @@ public class VotoServiceTest {
 		
 		voto = new Voto(usuario, itemPauta1, true);
 		
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		when(authentication.getName()).thenReturn(usuario.getCpf());
+		SecurityContextHolder.setContext(securityContext);
 	}
 	
 	/**
@@ -101,7 +110,7 @@ public class VotoServiceTest {
 		sessao.setDuracaoSessao(4L);
 		pauta.setSessao(sessao);
 		
-		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
+		when(usuarioService.findByCpf(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
@@ -119,8 +128,7 @@ public class VotoServiceTest {
 	 */
 	@Test(expected = VotoException.class)
 	public void testSalvaVotoRepetido() {
-		
-		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
+		when(usuarioService.findByCpf(any())).thenReturn(usuario);
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,
 				usuario.getId())).thenReturn(Optional.of(voto));
 		votoService.saveVoto(1L, true);
@@ -134,7 +142,7 @@ public class VotoServiceTest {
 	public void testSalvaVotoPautaInvalida() {
 		pauta.getSessao().setDuracaoSessao(0L);
 		
-		when(usuarioService.buscaUsuarioById(any())).thenReturn(usuario);
+		when(usuarioService.findByCpf(any())).thenReturn(usuario);
 		when(itemPautaService.findById(any())).thenReturn(itemPauta1);
 		
 		when(votoRepository.findByVotoIdItemPautaIdAndVotoIdUsuarioId(1L,

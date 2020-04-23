@@ -6,4 +6,5 @@ import com.konoha.votacao.modelo.Usuario;
 
 public interface UsuarioService extends UserDetailsService {
 	Usuario buscaUsuarioById(Long usuarioId);
+	Usuario findByCpf(String cpf);
 }

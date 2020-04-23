@@ -47,6 +47,21 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}
 		
 		throw new UsernameNotFoundException("Usuário não encontrado");
+	}
+
+	/**
+	 * Busca usuário por CPF
+	 * 
+	 */
+	@Override
+	public Usuario findByCpf(String cpf) {
+		Optional<Usuario> optUsuario = usuarioRepository.findByCpf(cpf);
+		
+		if(optUsuario.isPresent()) {
+			return optUsuario.get();
+		}
+		
+		throw new NotFoundException("Usuário não encontrado");
 	}	
 	
 }
